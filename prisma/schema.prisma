@@ -16,13 +16,16 @@ model Event {
   location String
   Date DateTime
   fee Int?
-  owner String
+  owner String @unique
   description String
+  questions Json[] @default([])
+  attendees Json[] @default([])
 }
 
 model Brand {
   id  String  @id @default(auto()) @map("_id") @db.ObjectId
   name String 
-  walletAddress String
+  walletAddress String @unique
+  username String @unique
   description String
 }

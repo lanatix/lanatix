@@ -6,6 +6,7 @@ import {
 } from "@solana/wallet-adapter-react";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import {
+  CoinbaseWalletAdapter,
   PhantomWalletAdapter,
   TrustWalletAdapter,
   UnsafeBurnerWalletAdapter,
@@ -41,6 +42,7 @@ const Wallet = ({ children }: { children: React.ReactNode }) => {
        * in the npm package `@solana/wallet-adapter-wallets`.
        */
       new PhantomWalletAdapter(),
+      new CoinbaseWalletAdapter(),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [network]

@@ -2,26 +2,79 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
 body {
-  color: rgb(var(--foreground-rgb));
+  background: #1e1e1e;
+  font-family: "Satoshi", sans-serif;
+  width: 100%;
+  min-height: 100%;
+  color: white;
+}
+
+body::-webkit-scrollbar {
+  @apply w-2;
+}
+body::-webkit-scrollbar-thumb {
+  @apply bg-black/50 rounded-full;
+}
+
+.btn-gradient::before {
   background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    93deg,
+    #00ffa3 17.74%,
+    #dc1fff 35.87%,
+    #03e1ff 62.17%,
+    rgba(220, 31, 255, 0.8) 80.3%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  content: "Get Started";
+  background-clip: text;
+  position: absolute;
+  z-index: 2;
+}
+
+.btn-gradient::after {
+  position: absolute;
+  width: 98%;
+  height: 97%;
+  content: "";
+  background: #1e1e1e;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  @apply rounded-full;
+}
+
+.btn-gradient {
+  position: relative;
+  background: linear-gradient(
+    93.26deg,
+    #00ffa3 17.74%,
+    #dc1fff 35.87%,
+    #03e1ff 62.17%,
+    rgba(220, 31, 255, 0.8) 80.3%
+  );
+}
+
+.btn-gradient2 {
+  background: linear-gradient(
+    59.43deg,
+    rgba(0, 255, 163, 0.62) 4.98%,
+    rgba(220, 31, 255, 0.83) 47.21%,
+    rgba(3, 225, 255, 0.82) 108.45%,
+    rgba(220, 31, 255, 0.48) 150.69%
+  );
+}
+
+.hero-gradient {
+  border-radius: 580px;
+  background: #551b56;
+  filter: blur(200px);
+  width: 580px;
+  height: 321px;
+  flex-shrink: 0;
 }
