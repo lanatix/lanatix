@@ -92,4 +92,10 @@ body::-webkit-scrollbar-thumb {
   font-family: Satoshi, sans-serif;
   border-radius: 999px;
   font-weight: 600;
+  flex-grow: 1;
+  justify-content: center;
+}
+
+.wallet-adapter-dropdown {
+  width: 100%;
 }

@@ -80,9 +80,9 @@ export default function AuthMain({
           onSubmit={(e) => {
             e.preventDefault();
           }}
-          className="mt-10"
+          className="mt-10 w-full"
         >
-          <div className="space-y-5">
+          <div className="space-y-5 w-full">
             <div className="space-y-1">
               <h4 className="text-sm">Unique Username</h4>
               <input
@@ -90,7 +90,7 @@ export default function AuthMain({
                 type="text"
                 onChange={handleChange}
                 name="username"
-                className="w-full focus:outline-none rounded-2xl p-3 bg-black/25"
+                className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
               />
             </div>
             <div className="space-y-1">
@@ -100,7 +100,7 @@ export default function AuthMain({
                 type="text"
                 onChange={handleChange}
                 name="name"
-                className="w-full focus:outline-none rounded-2xl p-3 bg-black/25"
+                className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
               />
             </div>
             <div className="space-y-1">
@@ -110,16 +110,16 @@ export default function AuthMain({
                 name="description"
                 onChange={handleChange}
                 rows={3}
-                className="w-full focus:outline-none rounded-2xl p-3 bg-black/25"
+                className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
               />
             </div>
           </div>
-          <div className="mt-10 space-y-5">
+          <div className="mt-10 flex flex-col items-center justify-center w-full space-y-5">
             {/* {wallets.map((wal, i) => (
               <button
                 type="button"
                 disabled={unavailableUsername}
-                onClick={() => handleWalletConnection(wal)}
+                // onClick={() => handleWalletConnection(wal)}
                 className="flex disabled:opacity-40 font-medium w-full justify-center items-center gap-2.5 bg-black rounded-2xl py-2.5 p-5"
               >
                 <img src={wal.adapter.icon} className="w-7" alt="" />
@@ -128,7 +128,7 @@ export default function AuthMain({
             ))} */}
             <WalletMultiButton
               disabled={unavailableUsername}
-              className="!w-full !bg-black rounded-full wallet-button"
+              className=" rounded-full wallet-button"
             />
           </div>
         </form>
