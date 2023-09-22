@@ -10,7 +10,7 @@ export const POST = async (req: NextRequest) => {
   const { walletAddress, username, ...payload } = await req.json();
   try {
     const alreadyExisting = await prisma.brand.findUnique({
-      where: { OR: [{ walletAddress }, { username }] },
+      where: { walletAddress },
     });
     if (alreadyExisting)
       return NextResponse.json(

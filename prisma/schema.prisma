@@ -25,8 +25,7 @@ model Event {
 model Brand {
   id  String  @id @default(auto()) @map("_id") @db.ObjectId
   name String 
-  walletAddress String 
+  walletAddress String @unique
   username String
   description String
-   @@unique([walletAddress, username])
 }
