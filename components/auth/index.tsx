@@ -1,10 +1,11 @@
 "use client";
-import { Wallet, useWallet } from "@solana/wallet-adapter-react";
+import { Wallet, useWallet, useConnection } from "@solana/wallet-adapter-react";
 import tickets from "../../assets/images/tickets.png";
 import Image from "next/image";
 import { ChangeEvent, useState, useEffect } from "react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { fetcher } from "@/utils/fetch";
+import { PublicKey } from "@solana/web3.js";
 
 export default function AuthMain({
   usernames,
@@ -17,23 +18,44 @@ export default function AuthMain({
   const [unavailableUsername, setUnavailable] = useState(true);
 
   const { wallets, select, wallet, connect, publicKey } = useWallet();
-  const handleWalletConnection = async (wallet: Wallet) => {
-    if (
-      credentials.username === "" ||
-      credentials.description === "" ||
-      credentials.name === ""
-    ) {
-      return;
-    } else {
-      select(wallet.adapter.name);
-      await connect();
+  const { connection } = useConnection();
+
+  useEffect(() => {
+    async function submitBrand() {
       const submitted = await fetcher("/api/brand/create", "POST", {
         walletAddress: publicKey?.toString(),
         ...credentials,
       });
       console.log(submitted);
     }
-  };
+    if (
+      publicKey &&
+      credentials.username !== "" &&
+      credentials.description !== "" &&
+      credentials.name !== "" &&
+      !unavailableUsername
+    ) {
+      submitBrand();
+    }
+  }, [publicKey]);
+
+  // const handleWalletConnection = async (wallet: Wallet) => {
+  //   if (
+  //     credentials.username === "" ||
+  //     credentials.description === "" ||
+  //     credentials.name === ""
+  //   ) {
+  //     return;
+  //   } else {
+  //     select(wallet.adapter.name);
+  //     await connect();
+  //     const submitted = await fetcher("/api/brand/create", "POST", {
+  //       walletAddress: publicKey?.toString(),
+  //       ...credentials,
+  //     });
+  //     console.log(submitted);
+  //   }
+  // };
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -93,7 +115,7 @@ export default function AuthMain({
             </div>
           </div>
           <div className="mt-10 space-y-5">
-            {wallets.map((wal, i) => (
+            {/* {wallets.map((wal, i) => (
               <button
                 type="button"
                 disabled={unavailableUsername}
@@ -103,8 +125,11 @@ export default function AuthMain({
                 <img src={wal.adapter.icon} className="w-7" alt="" />
                 Continue with {wal.adapter.name}
               </button>
-            ))}
-            {/* <WalletMultiButton  /> */}
+            ))} */}
+            <WalletMultiButton
+              disabled={unavailableUsername}
+              className="!w-full !bg-black rounded-full wallet-button"
+            />
           </div>
         </form>
       </div>
