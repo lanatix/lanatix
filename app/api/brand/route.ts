@@ -22,7 +22,7 @@ export const POST = async (req: NextRequest) => {
       { status: 200 }
     );
   } catch (err) {
-    NextResponse.json(
+    return NextResponse.json(
       { success: false, message: "A server error has occured", error: err },
       { status: 500 }
     );
