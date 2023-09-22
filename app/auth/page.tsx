@@ -9,6 +9,8 @@ const getUsernames = async () => {
   return usernames;
 };
 
+export const revalidate = 0;
+
 export default async function Auth() {
   const usernames = await getUsernames();
   return (

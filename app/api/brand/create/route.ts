@@ -7,10 +7,10 @@ import { NextRequest, NextResponse } from "next/server";
  * @returns
  */
 export const POST = async (req: NextRequest) => {
-  const { walletAddress, ...payload } = await req.json();
+  const { walletAddress, username, ...payload } = await req.json();
   try {
     const alreadyExisting = await prisma.brand.findUnique({
-      where: { walletAddress },
+      where: { OR: [{ walletAddress }, { username }] },
     });
     if (alreadyExisting)
       return NextResponse.json(
@@ -23,7 +23,7 @@ export const POST = async (req: NextRequest) => {
       );
 
     const brand = await prisma.brand.create({
-      data: { walletAddress, ...payload },
+      data: { walletAddress, username, ...payload },
     });
 
     return NextResponse.json(
