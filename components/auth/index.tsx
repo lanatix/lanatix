@@ -6,56 +6,71 @@ import { ChangeEvent, useState, useEffect } from "react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { fetcher } from "@/utils/fetch";
 import { PublicKey } from "@solana/web3.js";
+import { useToast } from "../ui/use-toast";
+import { useRouter } from "next/navigation";
 
 export default function AuthMain({
   usernames,
 }: {
   usernames: { username: string }[];
 }) {
+  const { toast } = useToast();
+  const router = useRouter();
+
   const initialState = { name: "", description: "", username: "" };
   const [newUser, setNewUser] = useState(true);
   const [credentials, setCredentials] = useState(initialState);
   const [unavailableUsername, setUnavailable] = useState(true);
 
-  const { wallets, select, wallet, connect, publicKey } = useWallet();
+  const { publicKey, disconnect } = useWallet();
   const { connection } = useConnection();
-
   useEffect(() => {
     async function submitBrand() {
-      const submitted = await fetcher("/api/brand/create", "POST", {
-        walletAddress: publicKey?.toString(),
-        ...credentials,
-      });
-      console.log(submitted);
+      if (newUser) {
+        const submitted = await fetcher("/api/brand/create", "POST", {
+          walletAddress: publicKey?.toString(),
+          ...credentials,
+        });
+        console.log(submitted);
+        toast({
+          description: submitted.message,
+        });
+        router.push("/dashboard");
+      } else {
+        const loggedIn = await fetcher("/api/brand", "POST", {
+          walletAddress: publicKey?.toString(),
+        });
+        if (!loggedIn.success) {
+          await disconnect();
+          toast({
+            description: "Account doesn't exist. Please sign up",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            description: loggedIn.message,
+          });
+          router.push("/dashboard");
+        }
+      }
     }
     if (
       publicKey &&
-      credentials.username !== "" &&
-      credentials.description !== "" &&
-      credentials.name !== "" &&
+      ((credentials.username !== "" &&
+        credentials.description !== "" &&
+        credentials.name !== "") ||
+        !newUser) &&
       !unavailableUsername
     ) {
       submitBrand();
+    } else {
+      disconnect();
+      toast({
+        description: "Please fill all the input fields",
+        variant: "destructive",
+      });
     }
   }, [publicKey]);
-
-  // const handleWalletConnection = async (wallet: Wallet) => {
-  //   if (
-  //     credentials.username === "" ||
-  //     credentials.description === "" ||
-  //     credentials.name === ""
-  //   ) {
-  //     return;
-  //   } else {
-  //     select(wallet.adapter.name);
-  //     await connect();
-  //     const submitted = await fetcher("/api/brand/create", "POST", {
-  //       walletAddress: publicKey?.toString(),
-  //       ...credentials,
-  //     });
-  //     console.log(submitted);
-  //   }
-  // };
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -73,8 +88,12 @@ export default function AuthMain({
   return (
     <div className="grid h-full relative md:grid-cols-2 items-center">
       <div className="md:px-20">
-        <h4 className="font-semibold text-4xl">Welcome to Lanatix</h4>
-        <p className="font-light text-sm">Let's get you started right away</p>
+        <h4 className="font-semibold text-4xl">
+          {newUser ? "Hello there👋" : "Welcome back👋"}
+        </h4>
+        {newUser && (
+          <p className="font-light text-sm">Let's get you started right away</p>
+        )}
         <form
           action=""
           onSubmit={(e) => {
@@ -82,50 +101,53 @@ export default function AuthMain({
           }}
           className="mt-10 w-full"
         >
-          <div className="space-y-5 w-full">
-            <div className="space-y-1">
-              <h4 className="text-sm">Unique Username</h4>
-              <input
-                required
-                type="text"
-                onChange={handleChange}
-                name="username"
-                className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
-              />
+          {newUser && (
+            <div className="space-y-5 w-full">
+              <div className="space-y-1">
+                <h4 className="text-sm">Unique Username</h4>
+                <input
+                  required
+                  type="text"
+                  onChange={handleChange}
+                  name="username"
+                  className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
+                />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-sm">Brand Name</h4>
+                <input
+                  required
+                  type="text"
+                  onChange={handleChange}
+                  name="name"
+                  className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
+                />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-sm">Brand Description</h4>
+                <textarea
+                  required
+                  name="description"
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
+                />
+              </div>
             </div>
-            <div className="space-y-1">
-              <h4 className="text-sm">Brand Name</h4>
-              <input
-                required
-                type="text"
-                onChange={handleChange}
-                name="name"
-                className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
-              />
-            </div>
-            <div className="space-y-1">
-              <h4 className="text-sm">Brand Description</h4>
-              <textarea
-                required
-                name="description"
-                onChange={handleChange}
-                rows={3}
-                className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
-              />
-            </div>
-          </div>
+          )}
+          <button
+            type="button"
+            className="font-light"
+            onClick={() => {
+              setUnavailable(false);
+              setNewUser(!newUser);
+            }}
+          >
+            {newUser
+              ? "Already have an account? Sign In"
+              : "Don't have an account? Sign up"}
+          </button>
           <div className="mt-10 flex flex-col items-center justify-center w-full space-y-5">
-            {/* {wallets.map((wal, i) => (
-              <button
-                type="button"
-                disabled={unavailableUsername}
-                // onClick={() => handleWalletConnection(wal)}
-                className="flex disabled:opacity-40 font-medium w-full justify-center items-center gap-2.5 bg-black rounded-2xl py-2.5 p-5"
-              >
-                <img src={wal.adapter.icon} className="w-7" alt="" />
-                Continue with {wal.adapter.name}
-              </button>
-            ))} */}
             <WalletMultiButton
               disabled={unavailableUsername}
               className=" rounded-full wallet-button"

@@ -7,19 +7,18 @@ import { NextRequest, NextResponse } from "next/server";
  * @returns
  */
 export const POST = async (req: NextRequest) => {
-  const { id, walletAddress, ...payload } = await req.json();
+  const { walletAddress } = await req.json();
   try {
     const brand = await prisma.brand.findUnique({ where: { walletAddress } });
-
-    if (!brand)
+    if (!brand) {
       return NextResponse.json(
         { success: false, message: "Account does not exist" },
-        { status: 400 }
+        { status: 401 }
       );
-
+    }
     return NextResponse.json(
-      { success: true, message: "Log in Successful", data: brand },
-      { status: 200 }
+      { success: true, message: "Signed in successfully", data: brand },
+      { status: 201 }
     );
   } catch (err) {
     return NextResponse.json(
