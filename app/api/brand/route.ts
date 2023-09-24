@@ -27,3 +27,26 @@ export const POST = async (req: NextRequest) => {
     );
   }
 };
+
+export const GET = async (req: NextRequest) => {
+  const walletAddress: string | undefined =
+    req.nextUrl.searchParams.get("wallet")!;
+
+  try {
+    const brand = await prisma.brand.findUnique({ where: { walletAddress } });
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Brand details fetched successfully",
+        data: brand,
+      },
+      { status: 200 }
+    );
+  } catch (err) {
+    return NextResponse.json(
+      { success: false, message: "A server error has occured", error: err },
+      { status: 500 }
+    );
+  }
+};

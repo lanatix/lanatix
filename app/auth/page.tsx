@@ -1,5 +1,6 @@
 import AuthMain from "@/components/auth";
 import prisma from "@/utils/prisma";
+import Loader from "./loading";
 
 const getUsernames = async () => {
   const usernames = await prisma.brand.findMany({

@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const POST = async (req: NextRequest) => {
   const { walletAddress, username, ...payload } = await req.json();
   try {
-    const alreadyExisting = await prisma.brand.findUnique({
+    const alreadyExisting = await prisma.brand.findMany({
       where: { walletAddress },
     });
     if (alreadyExisting)
@@ -21,6 +21,17 @@ export const POST = async (req: NextRequest) => {
         },
         { status: 201 }
       );
+
+    const existingUsername = await prisma.brand.findUnique({
+      where: { username },
+    });
+
+    if (existingUsername) {
+      return NextResponse.json(
+        { success: false, message: "Username is already taken" },
+        { status: 401 }
+      );
+    }
 
     const brand = await prisma.brand.create({
       data: { walletAddress, username, ...payload },

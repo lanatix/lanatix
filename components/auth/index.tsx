@@ -20,7 +20,8 @@ export default function AuthMain({
   const initialState = { name: "", description: "", username: "" };
   const [newUser, setNewUser] = useState(true);
   const [credentials, setCredentials] = useState(initialState);
-  const [unavailableUsername, setUnavailable] = useState(true);
+  const [unavailableUsername, setUnavailable] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { publicKey, disconnect } = useWallet();
   const { connection } = useConnection();
@@ -112,6 +113,11 @@ export default function AuthMain({
                   name="username"
                   className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
                 />
+                {unavailableUsername && (
+                  <h4 className="text-red-500 text-sm">
+                    Username already taken
+                  </h4>
+                )}
               </div>
               <div className="space-y-1">
                 <h4 className="text-sm">Brand Name</h4>
@@ -149,7 +155,13 @@ export default function AuthMain({
           </button>
           <div className="mt-10 flex flex-col items-center justify-center w-full space-y-5">
             <WalletMultiButton
-              disabled={unavailableUsername}
+              disabled={
+                (unavailableUsername ||
+                  credentials.username === "" ||
+                  credentials.description === "" ||
+                  credentials.name === "") &&
+                newUser
+              }
               className=" rounded-full wallet-button"
             />
           </div>

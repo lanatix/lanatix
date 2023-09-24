@@ -1,10 +1,11 @@
 import Image from "next/image";
 import tickets from "../../assets/images/tickets.png";
+import Link from "next/link";
 
 export default function Body() {
   return (
     <div className="flex flex-col mt-5 items-center justify-center">
-      <div className="text-center z-20 text-5xl font-bold leading-snug">
+      <div className="text-center z-20 md:text-5xl text-4xl font-bold leading-snug">
         <h4>Welcome to Lanatix</h4>
         <h4>Your Next-Gen Ticket Booking Platform!</h4>
       </div>
@@ -13,14 +14,16 @@ export default function Body() {
         className="flex z-20 mt-16 gap-10
        items-center"
       >
-        <button className="btn-gradient2 text-[#1e1e1e] rounded-full py-2.5 px-5 font-semibold ml-auto">
-          Get Started
-        </button>
+        <Link href="/auth">
+          <button className="btn-gradient2 text-[#1e1e1e] rounded-full py-2.5 px-5 font-semibold ml-auto">
+            Get Started
+          </button>
+        </Link>
         <button className="flex font-medium gap-2.5 items-center">
           <PlaySVG /> How it works
         </button>
       </div>
-      <div className=" h-[600px]">
+      <div className="h-[600px]">
         <Image src={tickets} alt="tickets" className="h-full object-cover" />
       </div>
       <div className="hero-gradient absolute -z-10"></div>
@@ -49,10 +52,10 @@ const PlaySVG = () => (
         y2="-27.3603"
         gradientUnits="userSpaceOnUse"
       >
-        <stop offset="0.15625" stop-color="#00FFA3" stop-opacity="0.62" />
-        <stop offset="0.364583" stop-color="#DC1FFF" stop-opacity="0.83" />
-        <stop offset="0.666667" stop-color="#03E1FF" stop-opacity="0.82" />
-        <stop offset="0.875" stop-color="#DC1FFF" stop-opacity="0.48" />
+        <stop offset="0.15625" stopColor="#00FFA3" stopOpacity="0.62" />
+        <stop offset="0.364583" stopColor="#DC1FFF" stopOpacity="0.83" />
+        <stop offset="0.666667" stopColor="#03E1FF" stopOpacity="0.82" />
+        <stop offset="0.875" stopColor="#DC1FFF" stopOpacity="0.48" />
       </linearGradient>
     </defs>
   </svg>

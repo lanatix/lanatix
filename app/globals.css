@@ -74,9 +74,8 @@ body::-webkit-scrollbar-thumb {
   border-radius: 580px;
   background: #551b56;
   filter: blur(200px);
-  width: 580px;
-  height: 321px;
   flex-shrink: 0;
+  @apply h-[321px] md:w-[580px] w-full;
 }
 
 .wallet-adapter-button {
@@ -98,6 +97,20 @@ body::-webkit-scrollbar-thumb {
 
 .wallet-adapter-dropdown {
   width: 100%;
+}
+
+.loader {
+  animation: 0.5s rotate infinite linear;
+  @apply text-purple-600;
+}
+
+@keyframes rotate {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 360deg;
+  }
 }
 
 @layer base {

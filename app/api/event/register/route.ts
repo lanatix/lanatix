@@ -18,8 +18,8 @@ export const POST = async (req: NextRequest) => {
     const registered = await prisma.event.update({
       where: { owner: walletAddress },
       data: {
-        attendees: {
-          push: payload,
+        registered: {
+          push: { walletAddress, ...payload },
         },
       },
     });
