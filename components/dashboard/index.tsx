@@ -4,7 +4,7 @@ import { useApp } from "../context";
 
 export default function DashboardMain() {
   const { brandDetails } = useApp();
-  console.log(brandDetails);
+  // console.log(brandDetails);
   return (
     <div className="min-h-screen  w-full">
       {/* header */}

@@ -53,6 +53,7 @@ export default function AuthMain({
             description: "Account doesn't exist. Please sign up",
             variant: "destructive",
           });
+          setLoading(false);
         } else {
           toast({
             description: loggedIn.message,
@@ -82,7 +83,7 @@ export default function AuthMain({
   };
   return (
     <div className="grid h-full relative md:grid-cols-2 items-center">
-      <AuthLoader />
+      {loading && <AuthLoader />}
       <div className="md:px-20">
         <h4 className="font-semibold text-4xl">
           {newUser ? "Hello there👋" : "Welcome back👋"}
