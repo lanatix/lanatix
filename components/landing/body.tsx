@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Body() {
   return (
-    <div className="flex flex-col mt-5 items-center justify-center">
+    <div className="flex flex-col mt-10 md:mt-5 items-center justify-center">
       <div className="text-center z-20 md:text-5xl text-4xl font-bold leading-snug">
         <h4>Welcome to Lanatix</h4>
         <h4>Your Next-Gen Ticket Booking Platform!</h4>

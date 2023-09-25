@@ -1,3 +1,5 @@
+import ScheduleMain from "@/components/dashboard/schedule";
+
 export default function Schedule() {
-  return <div></div>;
+  return <ScheduleMain />;
 }
