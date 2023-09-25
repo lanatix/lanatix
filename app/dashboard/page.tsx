@@ -1,3 +1,5 @@
-export default function Dashboard() {
-  return <div>Hello motherfucker</div>;
+import DashboardMain from "@/components/dashboard";
+
+export default function DashboardPage() {
+  return <DashboardMain />;
 }

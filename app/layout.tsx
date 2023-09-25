@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import dynamic from "next/dynamic";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/context/theme-provider";
+import { AppProvider } from "@/components/context";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,8 +30,14 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Wallet>{children}</Wallet>
-        <Toaster />
+        <ThemeProvider defaultTheme="dark" attribute="class">
+          <Wallet>
+            <AppProvider>
+              {children}
+              <Toaster />
+            </AppProvider>
+          </Wallet>
+        </ThemeProvider>
       </body>
     </html>
   );

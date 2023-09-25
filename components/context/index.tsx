@@ -1,11 +1,12 @@
 "use client";
 
 import { fetcher } from "@/utils/fetch";
+import { Brand } from "@prisma/client";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type AppState = {
-  brandDetails: {} | undefined;
+  brandDetails: Brand | undefined;
   loading: boolean;
   walletAddress: string | undefined;
 };
@@ -23,7 +24,7 @@ export const useApp = () => {
 };
 
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
-  const [brandDetails, setDetails] = useState<{} | undefined>();
+  const [brandDetails, setDetails] = useState<Brand | undefined>();
   const [loading, setLoading] = useState(false);
   const { publicKey } = useWallet();
 
@@ -44,7 +45,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
           "GET"
         );
 
-        setDetails(fetched);
+        setDetails(fetched.data);
       }
     }
     fetchDetails();

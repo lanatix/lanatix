@@ -8,6 +8,7 @@ import { fetcher } from "@/utils/fetch";
 import { PublicKey } from "@solana/web3.js";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
+import AuthLoader from "./loader";
 
 export default function AuthMain({
   usernames,
@@ -28,21 +29,26 @@ export default function AuthMain({
   useEffect(() => {
     async function submitBrand() {
       if (newUser) {
+        setLoading(true);
         const submitted = await fetcher("/api/brand/create", "POST", {
           walletAddress: publicKey?.toString(),
           ...credentials,
-        });
-        console.log(submitted);
-        toast({
-          description: submitted.message,
-        });
+        }).catch(() => setLoading(false));
+        if (submitted.success) {
+          toast({
+            description: "Authenticated",
+          });
+        }
+        setLoading(false);
         router.push("/dashboard");
       } else {
+        setLoading(true);
         const loggedIn = await fetcher("/api/brand", "POST", {
           walletAddress: publicKey?.toString(),
         });
         if (!loggedIn.success) {
           await disconnect();
+          setLoading(false);
           toast({
             description: "Account doesn't exist. Please sign up",
             variant: "destructive",
@@ -52,24 +58,12 @@ export default function AuthMain({
             description: loggedIn.message,
           });
           router.push("/dashboard");
+          setLoading(false);
         }
       }
     }
-    if (
-      publicKey &&
-      ((credentials.username !== "" &&
-        credentials.description !== "" &&
-        credentials.name !== "") ||
-        !newUser) &&
-      !unavailableUsername
-    ) {
+    if (publicKey) {
       submitBrand();
-    } else {
-      disconnect();
-      toast({
-        description: "Please fill all the input fields",
-        variant: "destructive",
-      });
     }
   }, [publicKey]);
   const handleChange = (
@@ -88,6 +82,7 @@ export default function AuthMain({
   };
   return (
     <div className="grid h-full relative md:grid-cols-2 items-center">
+      <AuthLoader />
       <div className="md:px-20">
         <h4 className="font-semibold text-4xl">
           {newUser ? "Hello there👋" : "Welcome back👋"}
