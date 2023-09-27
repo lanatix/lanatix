@@ -107,9 +107,18 @@ body::-webkit-scrollbar-thumb {
   width: 100%;
 }
 
+input,
+textarea {
+  @apply px-5 py-2.5 border focus:outline-none rounded-lg bg-transparent;
+}
+
 .loader {
   animation: 0.5s rotate infinite linear;
   @apply text-purple-600;
+}
+
+tr {
+  @apply justify-between;
 }
 
 @keyframes rotate {

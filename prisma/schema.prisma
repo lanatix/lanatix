@@ -24,6 +24,7 @@ model Event {
   attended Json[] @default([])
   admins String[] @default([])
   adminPassword String
+  images String[] @default([])
 }
 
 model Brand {
