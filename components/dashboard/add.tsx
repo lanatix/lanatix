@@ -97,8 +97,8 @@ export default function MainAdd({ setClose }: { setClose: any }) {
     } catch (err) {
       toast({
         description: "An error has occured",
-        title: "Error!"
-      })
+        title: "Error!",
+      });
       console.log(err);
       setLoading(false);
     }

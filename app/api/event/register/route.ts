@@ -7,7 +7,7 @@ export const POST = async (req: NextRequest) => {
   const { owner, uniqueName, email, fullName, answers } = await req.json();
 
   try {
-    let img = await QRCode.toDataURL(JSON.stringify({ fullName, email }));
+    let img = await QRCode.toDataURL(JSON.stringify({ fullName, email, owner, uniqueName }));
 
     const event = await prisma.event.findUnique({
       where: {
