@@ -11,6 +11,7 @@ import {
   ArrowUpRight,
   ChevronLeft,
   ChevronRight,
+  QrCode,
 } from "lucide-react";
 import Register from "./register";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -18,6 +19,7 @@ import { Navigation } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/navigation";
+import QR from "./qr";
 
 export default function EventMain({
   eventData,
@@ -30,6 +32,7 @@ export default function EventMain({
   const { brandDetails } = useApp();
   const { toast } = useToast();
   const [register, setRegister] = useState(false);
+  const [scan, setScan] = useState(false);
 
   useEffect(() => {
     if (brandDetails) {
@@ -54,6 +57,13 @@ export default function EventMain({
           setRegister={setRegister}
         />
       )}
+      {scan && <QR setScan={setScan} />}
+      <button
+        onClick={() => setScan(true)}
+        className="fixed bottom-5 right-5 z-30 rounded-full grad p-5 text-black"
+      >
+        <QrCode />
+      </button>
       <div className="relative">
         <div className="image-fade flex flex-col">
           <div className="h-full p-5">
@@ -80,7 +90,7 @@ export default function EventMain({
           alt=""
         />
       </div>
-      <div className="p-5 py-0">
+      <div className="p-5 py-0 pb-5">
         <div className="flex ">
           <div>
             <h4>{date.toDateString()}</h4>
