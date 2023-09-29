@@ -107,6 +107,24 @@ body::-webkit-scrollbar-thumb {
   width: 100%;
 }
 
+.eventCover {
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 200, 0, 1) 0%,
+    transparent 100%
+  );
+}
+
+.image-fade {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background-image: linear-gradient(to top, #1e1e1e, rgba(239, 239, 239, 0));
+}
+
 input,
 textarea {
   @apply px-5 py-2.5 border focus:outline-none rounded-lg bg-transparent;

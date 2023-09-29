@@ -2,7 +2,7 @@
 
 import { fetcher } from "@/utils/fetch";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, ChangeEvent, useState } from "react";
 import { useApp } from "../context";
 import {
   ChevronLeft,
@@ -17,23 +17,24 @@ import {
 import { Calendar } from "../ui/calendar";
 import uploadImages from "@/helpers/uploadImages";
 import ImageUploading from "react-images-uploading";
-import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import { useToast } from "../ui/use-toast";
+import { useRouter } from "next/navigation";
 
 interface Event {
   title: string;
   location: string;
-  time: Date | null;
+  time: string;
   owner: string;
   uniqueName: string;
   adminPassword: string;
   description: string;
 }
 
-export default function MainAdd() {
+export default function MainAdd({ setClose }: { setClose: any }) {
   const [usernames, setUsernames] = useState<{ uniqueName: string }[]>([]);
   const [loadNames, setLoadNames] = useState(true);
   const { brandDetails } = useApp();
@@ -41,13 +42,14 @@ export default function MainAdd() {
   const [questions, setQuestions] = useState<string[]>([]);
   const [currentQuestion, setCurrent] = useState("");
   const [images, setImages] = useState<any[]>([]);
+  const [unavailableUsername, setUnavailable] = useState(false);
 
   // load usernames
   useEffect(() => {
     const fetchNames = async () => {
       const { data } = await fetcher(
-        `/api/event/names?owner=${brandDetails?.walletAddress}`,
-        "GET"
+        `/api/event/names?owner=${brandDetails?.username}`,
+        "GET",
       );
       console.log(data);
       setUsernames(data);
@@ -61,18 +63,20 @@ export default function MainAdd() {
   const initialState: Event = {
     title: "",
     location: "",
-    time: null,
-    owner: publicKey?.toString()!,
+    time: "",
+    owner: brandDetails?.username!,
     description: "",
     uniqueName: "",
     adminPassword: "",
   };
-
+  const { toast } = useToast();
+  const router = useRouter();
   const [eventCredentials, setCredentials] = useState<Event>(initialState);
 
   const submitEventData = async (e: FormEvent) => {
     e.preventDefault();
     try {
+      console.log(eventCredentials, eventDate, questions);
       setLoading(true);
 
       const urls = await uploadImages(images);
@@ -83,12 +87,39 @@ export default function MainAdd() {
         date: eventDate,
         images: urls,
       });
-
+      toast({
+        description: "Event Created!",
+        title: "Redirecting..",
+      });
+      router.push(`/${brandDetails.username}/${eventCredentials.uniqueName}`);
       setLoading(false);
       console.log(submitted);
     } catch (err) {
+      toast({
+        description: "An error has occured",
+        title: "Error!"
+      })
       console.log(err);
       setLoading(false);
+    }
+  };
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setCredentials((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+    if (e.target.name === "uniqueName") {
+      if (
+        usernames.filter((item) => item.uniqueName === e.target.value)
+          .length !== 0
+      ) {
+        setUnavailable(true);
+      } else {
+        setUnavailable(false);
+      }
     }
   };
 
@@ -97,11 +128,14 @@ export default function MainAdd() {
     setCurrent("");
   };
   return (
-    <div className="fixed overflow-y-scroll backdrop-blur-lg p-5 h-screen w-screen bg-neutral-900/75">
+    <div className="fixed z-50 overflow-y-scroll backdrop-blur-lg p-5 h-screen w-screen bg-neutral-900/75">
       <div className="flex items-center">
         <h4 className="text-3xl font-medium">Add an Event</h4>
 
-        <button className="p-2.5 ml-auto rounded-lg border">
+        <button
+          onClick={(e) => setClose(false)}
+          className="p-2.5 ml-auto rounded-lg border"
+        >
           <X />
         </button>
       </div>
@@ -112,6 +146,7 @@ export default function MainAdd() {
           onChange={(imageList, addUpdateIndex) => {
             console.log(imageList, addUpdateIndex);
             setImages(imageList);
+            console.log(images);
           }}
         >
           {({
@@ -190,7 +225,10 @@ export default function MainAdd() {
         <div className="space-y-1">
           <h4 className="font-medium">Event Title</h4>
           <input
+            required
             type="text"
+            name="title"
+            onChange={handleChange}
             placeholder="Phonk Party"
             className="focus:outline-none border w-full rounded-lg px-5 p-2.5 bg-transparent"
           />
@@ -198,7 +236,9 @@ export default function MainAdd() {
         <div className="space-y-1">
           <h4 className="font-medium">Unique Name</h4>
           <input
+            required
             type="text"
+            onChange={handleChange}
             placeholder="event-name123"
             name="uniqueName"
             className="border rounded-lg w-full bg-transparent px-5"
@@ -208,7 +248,9 @@ export default function MainAdd() {
         <div className="space-y-1">
           <h4 className="font-medium">Admin Passphrase</h4>
           <input
+            required
             type="password"
+            onChange={handleChange}
             name="adminPassword"
             placeholder="Passphrase for Admin access"
             className="border rounded-lg w-full bg-transparent px-5"
@@ -217,7 +259,9 @@ export default function MainAdd() {
         <div className="space-y-1">
           <h4 className="font-medium">Event Location</h4>
           <input
+            required
             type="text"
+            onChange={handleChange}
             name="location"
             placeholder="5 Crest Avenue, New York City"
             className="border rounded-lg w-full bg-transparent px-5"
@@ -226,8 +270,10 @@ export default function MainAdd() {
         <div className="space-y-1">
           <h4 className="font-medium">Event Description</h4>
           <textarea
+            required
             name="description"
             rows={3}
+            onChange={handleChange}
             className="border rounded-lg bg-transparent w-full px-5"
           />
         </div>
@@ -245,7 +291,7 @@ export default function MainAdd() {
           <input
             type="time"
             name="time"
-            placeholder="Passphrase for Admin access"
+            onChange={handleChange}
             className="border rounded-lg w-full bg-transparent px-5"
           />
         </div>
@@ -277,6 +323,13 @@ export default function MainAdd() {
             </div>
           </div>
         </div>
+        <button
+          disabled={unavailableUsername || loading || loadNames}
+          type="submit"
+          className="w-full disabled:bg-neutral-600 rounded-lg px-5 p-2.5 bg-purple-500"
+        >
+          {loading ? "Adding Event..." : "Add Event"}
+        </button>
       </form>
     </div>
   );

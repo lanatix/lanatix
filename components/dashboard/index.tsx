@@ -11,7 +11,7 @@ export default function DashboardMain() {
   // console.log(brandDetails);
   return (
     <div className="min-h-screen  w-full">
-      {add && <MainAdd />}
+      {add && <MainAdd setClose={setAdd} />}
       {/* header */}
       <div className="p-5 border-b border-b-neutral-700">
         <h4 className="font-medium text-xl truncate">{brandDetails?.name}</h4>

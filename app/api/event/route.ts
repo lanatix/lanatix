@@ -3,11 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
   const name = await req.nextUrl.searchParams.get("name")!;
+  const owner = await req.nextUrl.searchParams.get("owner")!
 
   try {
     const event = await prisma.event.findUnique({
       where: {
-        uniqueName: name,
+        owner_uniqueName: {
+          owner,
+          uniqueName: name
+        }
       },
     });
     return NextResponse.json(

@@ -11,26 +11,29 @@ datasource db {
 }
 
 model Event {
-  id  String  @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-  location String
-  Date DateTime
-  fee Int?
-  owner String @unique
-  uniqueName String @unique
-  description String
-  questions Json[] @default([])
-  registered Json[] @default([])
-  attended Json[] @default([])
-  admins String[] @default([])
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  location      String
+  date          DateTime
+  fee           Int?
+  owner         String
+  uniqueName    String
+  description   String
+  questions     String[]
+  registered    Json[]
+  attended      Json[]
+  admins        String[]
   adminPassword String
-  images String[] @default([])
+  images        String[]
+  time          String
+
+  @@unique([owner, uniqueName])
 }
 
 model Brand {
-  id  String  @id @default(auto()) @map("_id") @db.ObjectId
-  name String 
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
   walletAddress String @unique
-  username String @unique
-  description String
+  username      String @unique
+  description   String
 }

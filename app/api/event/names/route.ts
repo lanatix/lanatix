@@ -2,12 +2,12 @@ import prisma from "@/utils/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
-  const walletAddress = req.nextUrl.searchParams.get("owner")!;
+  const owner = req.nextUrl.searchParams.get("owner")!;
 
   try {
     const usernames = await prisma.event.findMany({
       where: {
-        owner: walletAddress,
+        owner,
       },
       select: {
         uniqueName: true,
