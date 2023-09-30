@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 
 export const POST = async (req: NextRequest) => {
   const {
+    questions,
     uniqueName,
     owner,
     adminPassword,
@@ -48,6 +49,7 @@ export const POST = async (req: NextRequest) => {
         description,
         date,
         time,
+        questions: questions ? questions : [],
       },
     });
 

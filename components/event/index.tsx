@@ -11,6 +11,7 @@ import {
   ArrowUpRight,
   ChevronLeft,
   ChevronRight,
+  Lock,
   QrCode,
 } from "lucide-react";
 import Register from "./register";
@@ -20,6 +21,8 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import QR from "./qr";
+import { useWallet } from "@solana/wallet-adapter-react";
+import Authorise from "./authorise";
 
 export default function EventMain({
   eventData,
@@ -33,6 +36,8 @@ export default function EventMain({
   const { toast } = useToast();
   const [register, setRegister] = useState(false);
   const [scan, setScan] = useState(false);
+  const [authorise, setAuthorise] = useState(false);
+  const { publicKey } = useWallet();
 
   useEffect(() => {
     if (brandDetails) {
@@ -42,6 +47,16 @@ export default function EventMain({
           description: "Admin Priviledges granted.",
         });
       }
+    }
+    if (
+      eventData?.admins.filter(
+        (item: any) => item.walletAddress === publicKey?.toString(),
+      )
+    ) {
+      setAdmin(true);
+      toast({
+        description: "Admin Priviledges granted.",
+      });
     }
   }, [brandDetails]);
   const date = new Date(eventData?.date!);
@@ -58,23 +73,43 @@ export default function EventMain({
         />
       )}
       {scan && <QR setScan={setScan} />}
-      <button
-        onClick={() => setScan(true)}
-        className="fixed bottom-5 right-5 z-30 rounded-full grad p-5 text-black"
-      >
-        <QrCode />
-      </button>
+      {authorise && (
+        <Authorise
+          setAdmin={setAdmin}
+          setAuthorise={setAuthorise}
+          owner={eventData?.owner!}
+          uniqueName={eventData?.uniqueName!}
+        />
+      )}
+      {admin && (
+        <button
+          onClick={() => setScan(true)}
+          className="fixed bottom-5 right-5 z-30 rounded-full grad p-5 text-black"
+        >
+          <QrCode />
+        </button>
+      )}
       <div className="relative">
         <div className="image-fade flex flex-col">
           <div className="h-full p-5">
             <div className="flex items-center">
               <h4 className="font-bold text-3xl">lanatix</h4>
-              <button
-                onClick={() => setRegister(true)}
-                className="ml-auto rounded-full p-2.5 grad text-black"
-              >
-                <ArrowUpRight size={20} />
-              </button>
+              <div className="flex ml-auto items-center gap-5">
+                {!admin && (
+                  <button
+                    onClick={() => setAuthorise(true)}
+                    className=" rounded-full p-2.5 grad text-black"
+                  >
+                    <Lock size={20} />
+                  </button>
+                )}{" "}
+                <button
+                  onClick={() => setRegister(true)}
+                  className=" rounded-full p-2.5 grad text-black"
+                >
+                  <ArrowUpRight size={20} />
+                </button>
+              </div>
             </div>
           </div>
           <div className="p-5">

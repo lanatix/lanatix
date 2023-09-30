@@ -22,7 +22,7 @@ model Event {
   questions     String[]
   registered    Json[]
   attended      Json[]
-  admins        String[]
+  admins        Json[]
   adminPassword String
   images        String[]
   time          String

@@ -1,7 +1,7 @@
 "use client";
 
 import { fetcher } from "@/utils/fetch";
-import { Brand } from "@prisma/client";
+import { Brand, Event } from "@prisma/client";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -9,6 +9,8 @@ type AppState = {
   brandDetails: Brand | undefined;
   loading: boolean;
   walletAddress: string | undefined;
+  events: Event[] | undefined;
+  setEvents: any;
 };
 
 export const AppContext = createContext<AppState | null>(null);
@@ -25,7 +27,8 @@ export const useApp = () => {
 
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [brandDetails, setDetails] = useState<Brand | undefined>();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState<Event[]>([]);
   const { publicKey } = useWallet();
 
   const value = {
@@ -34,19 +37,30 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     loading,
     setLoading,
     walletAddress: publicKey?.toString(),
+    events,
+    setEvents,
   };
 
   useEffect(() => {
     async function fetchDetails() {
+      setLoading(true);
       if (publicKey) {
-        setLoading(true);
         const fetched = await fetcher(
           `/api/brand?wallet=${publicKey.toString()}`,
-          "GET"
+          "GET",
         );
 
-        setDetails(fetched.data);
+        if (fetched.success) {
+          setDetails(fetched.data);
+        }
+        const { data } = await fetcher(
+          `/api/event/all?owner=${fetched.data.username}`,
+          "GET",
+        );
+        console.log(data);
+        setEvents(data);
       }
+      setLoading(false);
     }
     fetchDetails();
   }, [publicKey]);

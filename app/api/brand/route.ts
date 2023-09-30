@@ -13,17 +13,17 @@ export const POST = async (req: NextRequest) => {
     if (!brand) {
       return NextResponse.json(
         { success: false, message: "Account does not exist" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     return NextResponse.json(
       { success: true, message: "Signed in successfully", data: brand },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (err) {
     return NextResponse.json(
       { success: false, message: "A server error has occured", error: err },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };
@@ -34,19 +34,24 @@ export const GET = async (req: NextRequest) => {
 
   try {
     const brand = await prisma.brand.findUnique({ where: { walletAddress } });
-
+    if (!brand) {
+      return NextResponse.json(
+        { success: false, message: "Brand Data does not exist" },
+        { status: 400 },
+      );
+    }
     return NextResponse.json(
       {
         success: true,
         message: "Brand details fetched successfully",
         data: brand,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (err) {
     return NextResponse.json(
       { success: false, message: "A server error has occured", error: err },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };

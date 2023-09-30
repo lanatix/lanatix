@@ -87,11 +87,18 @@ export default function MainAdd({ setClose }: { setClose: any }) {
         date: eventDate,
         images: urls,
       });
-      toast({
-        description: "Event Created!",
-        title: "Redirecting..",
-      });
-      router.push(`/${brandDetails.username}/${eventCredentials.uniqueName}`);
+      if (submitted.success) {
+        toast({
+          description: "Event Created!",
+          title: "Redirecting..",
+        });
+        router.push(`/${brandDetails?.username}/${eventCredentials.uniqueName}`);
+      } else {
+        toast({
+          description: "An error has occured",
+          variant: 'destructive'
+        })
+      }
       setLoading(false);
       console.log(submitted);
     } catch (err) {
