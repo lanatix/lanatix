@@ -1,23 +1,38 @@
 import { fetcher } from "@/utils/fetch";
 import { Event } from "@prisma/client";
 import { Loader2, X } from "lucide-react";
-import { ChangeEvent, useState, FormEvent } from "react";
+import { ChangeEvent, useState, FormEvent, useCallback } from "react";
 import { toast } from "../ui/use-toast";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
+import {
+  Keypair,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  Struct,
+  SystemProgram,
+  Transaction,
+} from "@solana/web3.js";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 export default function Register({
   setRegister,
   brandName,
   eventData,
+  walletAddress,
 }: {
   setRegister: any;
   brandName: string | undefined;
   eventData: Event | null;
+  walletAddress: string;
 }) {
+  const { connection } = useConnection();
+  const { publicKey, sendTransaction } = useWallet();
   const initialState = { fullName: "", email: "" };
   const [credentials, setCredentials] = useState(initialState);
   const initialAnswers = eventData?.questions.reduce(
     (prev, key) => ({ ...prev, [key]: "" }),
-    {},
+    {}
   );
   const [answers, setAnswers] = useState<any>(initialAnswers);
   const [submitting, setSubmitting] = useState(false);
@@ -26,7 +41,6 @@ export default function Register({
 
     try {
       setSubmitting(true);
-      console.log({ ...credentials, answers });
       const registered = await fetcher("/api/event/register", "POST", {
         ...credentials,
         answers,
@@ -38,7 +52,6 @@ export default function Register({
         description: registered.message,
       });
       setSubmitting(false);
-      console.log(registered);
     } catch (err) {
       setSubmitting(false);
       console.log(err);
@@ -51,6 +64,42 @@ export default function Register({
   const handleAnswers = (e: ChangeEvent<HTMLInputElement>) => {
     setAnswers((prev: any) => ({ ...prev, [e.target.name]: e.target.value }));
   };
+  const sendSOL = useCallback(async () => {
+    if (!publicKey) throw new WalletNotConnectedError();
+
+    // 890880 lamports as of 2022-09-01
+    const feeInLamports = eventData?.fee! * LAMPORTS_PER_SOL;
+
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: publicKey,
+        toPubkey: new PublicKey(walletAddress),
+        lamports: feeInLamports,
+      })
+    );
+
+    const {
+      context: { slot: minContextSlot },
+      value: { blockhash, lastValidBlockHeight },
+    } = await connection.getLatestBlockhashAndContext();
+
+    try {
+      const signature = await sendTransaction(transaction, connection, {
+        minContextSlot,
+      });
+
+      await connection.confirmTransaction({
+        blockhash,
+        lastValidBlockHeight,
+        signature,
+      });
+    } catch (err) {
+      toast({
+        description: "Failed to Complete Transaction",
+        variant: "destructive",
+      });
+    }
+  }, [publicKey, sendTransaction, connection]);
   return (
     <div className="fixed flex overflow-y-scroll justify-center flex-col items-center top-0 left-0 bottom-0 right-0 w-full h-full backdrop-blur-xl z-50 bg-[#1e1e1e]/75 p-5">
       <button
@@ -105,8 +154,21 @@ export default function Register({
               </div>
             ))}
           </div>
+          {eventData?.fee && (
+            <>
+              <WalletMultiButton />
+              <button
+                className="py-2.5 w-full bg-black rounded-lg mt-5 disabled:opacity-40"
+                disabled={!publicKey}
+                type="button"
+                onClick={sendSOL}
+              >
+                Send {eventData?.fee}sol and register
+              </button>
+            </>
+          )}
           <button
-            onSubmit={handleSubmit}
+            type="submit"
             className="w-full mt-5 grad px-5 p-2.5 text-black font-medium rounded-lg"
           >
             Register

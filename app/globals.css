@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+body,
+.event-right {
   background: #1e1e1e;
   font-family: "Satoshi", sans-serif;
   width: 100%;
@@ -10,11 +11,15 @@ body {
   color: white;
 }
 
-body::-webkit-scrollbar {
+body::-webkit-scrollbar,
+.event-right::-webkit-scrollbar,
+.dashboard-scroll::-webkit-scrollbar {
   @apply w-2;
 }
-body::-webkit-scrollbar-thumb {
-  @apply bg-black/50 rounded-full;
+body::-webkit-scrollbar-thumb,
+.dashboard-scroll::-webkit-scrollbar-thumb,
+.event-right::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full;
 }
 
 .btn-gradient::before {
@@ -85,7 +90,28 @@ body::-webkit-scrollbar-thumb {
     rgba(220, 31, 255, 0.83) /* rgba(3, 225, 255, 0.82) */
   );
 }
+.grad-text {
+  background: linear-gradient(
+    45deg,
+    rgba(0, 255, 163, 0.62),
+    rgba(220, 31, 255, 0.83) /* rgba(3, 225, 255, 0.82) */
+  );
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
 
+.nav-icon {
+  color: rgba(0, 255, 163, 0.62);
+}
+
+.green-bg {
+  background: rgba(0, 255, 163, 0.62);
+}
+
+.side-bg {
+  background: rgba(220, 31, 255, 0.83);
+}
 .wallet-adapter-button {
   width: 100% !important;
   background: linear-gradient(

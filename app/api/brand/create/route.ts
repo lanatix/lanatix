@@ -1,5 +1,6 @@
 import prisma from "@/utils/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcrypt";
 
 /**
  * This function is responsible for the brand account creation
@@ -7,12 +8,12 @@ import { NextRequest, NextResponse } from "next/server";
  * @returns
  */
 export const POST = async (req: NextRequest) => {
-  const { walletAddress, username, ...payload } = await req.json();
+  const { walletAddress, username, password, ...payload } = await req.json();
   try {
     const alreadyExisting = await prisma.brand.findMany({
       where: { walletAddress },
     });
-    if (alreadyExisting)
+    if (alreadyExisting.length !== 0)
       return NextResponse.json(
         {
           success: true,
@@ -33,8 +34,10 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
+    const hashedPassword = await bcrypt.hash(password, 12);
+
     const brand = await prisma.brand.create({
-      data: { walletAddress, username, ...payload },
+      data: { walletAddress, username, password: hashedPassword, ...payload },
     });
 
     return NextResponse.json(

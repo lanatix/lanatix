@@ -7,7 +7,6 @@ export const POST = async (req: NextRequest) => {
     questions,
     uniqueName,
     owner,
-    adminPassword,
     title,
     description,
     location,
@@ -29,21 +28,16 @@ export const POST = async (req: NextRequest) => {
     if (alreadyExist) {
       return NextResponse.json(
         { success: false, message: "Event with unique name already exists" },
-        { status: 401 },
+        { status: 401 }
       );
     }
-
-    const hashedPassword = await bcrypt.hash(adminPassword, 12);
 
     const created = await prisma.event.create({
       data: {
         uniqueName,
         owner,
-        adminPassword: hashedPassword,
         registered: [],
-        admins: [],
         images,
-        attended: [],
         title,
         location,
         description,
@@ -58,12 +52,12 @@ export const POST = async (req: NextRequest) => {
         success: true,
         message: "Event created successfully",
       },
-      { status: 201 },
+      { status: 201 }
     );
   } catch (err) {
     return NextResponse.json(
       { success: false, message: "A server error has occured", error: err },
-      { status: 500 },
+      { status: 500 }
     );
   }
 };

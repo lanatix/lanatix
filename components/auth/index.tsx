@@ -9,6 +9,8 @@ import { PublicKey } from "@solana/web3.js";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
 import AuthLoader from "./loader";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 export default function AuthMain({
   usernames,
@@ -18,20 +20,26 @@ export default function AuthMain({
   const { toast } = useToast();
   const router = useRouter();
 
-  const initialState = { name: "", description: "", username: "" };
+  const initialState = {
+    name: "",
+    description: "",
+    username: "",
+    password: "",
+  };
   const [newUser, setNewUser] = useState(true);
   const [credentials, setCredentials] = useState(initialState);
   const [unavailableUsername, setUnavailable] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { data: session, status } = useSession();
 
   const { publicKey, disconnect } = useWallet();
   const { connection } = useConnection();
   useEffect(() => {
-    async function submitBrand() {
+    async function submitBrand(walletAddress: string) {
       if (newUser) {
         setLoading(true);
         const submitted = await fetcher("/api/brand/create", "POST", {
-          walletAddress: publicKey?.toString(),
+          walletAddress,
           ...credentials,
         }).catch(() => setLoading(false));
         if (submitted.success) {
@@ -44,7 +52,7 @@ export default function AuthMain({
       } else {
         setLoading(true);
         const loggedIn = await fetcher("/api/brand", "POST", {
-          walletAddress: publicKey?.toString(),
+          walletAddress,
         });
         if (!loggedIn.success) {
           await disconnect();
@@ -63,10 +71,13 @@ export default function AuthMain({
         }
       }
     }
-    if (publicKey) {
-      submitBrand();
+    if (publicKey || session) {
+      submitBrand(
+        (publicKey?.toString() as string) ||
+          (session?.user.walletAddress as string)
+      );
     }
-  }, [publicKey]);
+  }, [publicKey, session]);
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -116,6 +127,16 @@ export default function AuthMain({
                 )}
               </div>
               <div className="space-y-1">
+                <h4 className="text-sm">Admin Password</h4>
+                <input
+                  required
+                  type="password"
+                  onChange={handleChange}
+                  name="password"
+                  className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
+                />
+              </div>
+              <div className="space-y-1">
                 <h4 className="text-sm">Brand Name</h4>
                 <input
                   required
@@ -160,6 +181,17 @@ export default function AuthMain({
               }
               className=" rounded-full wallet-button"
             />
+            <div className="flex flex-col w-full items-center gap-2.5">
+              <h4>or</h4>
+              <Link href={"/auth/admin"} className="w-full">
+                <button
+                  className="rounded-lg border w-full py-2.5 border-white/30"
+                  type="button"
+                >
+                  Sign in as Admin
+                </button>
+              </Link>
+            </div>
           </div>
         </form>
       </div>

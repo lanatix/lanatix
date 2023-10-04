@@ -30,7 +30,6 @@ interface Event {
   time: string;
   owner: string;
   uniqueName: string;
-  adminPassword: string;
   description: string;
 }
 
@@ -49,7 +48,7 @@ export default function MainAdd({ setClose }: { setClose: any }) {
     const fetchNames = async () => {
       const { data } = await fetcher(
         `/api/event/names?owner=${brandDetails?.username}`,
-        "GET",
+        "GET"
       );
       console.log(data);
       setUsernames(data);
@@ -67,7 +66,6 @@ export default function MainAdd({ setClose }: { setClose: any }) {
     owner: brandDetails?.username!,
     description: "",
     uniqueName: "",
-    adminPassword: "",
   };
   const { toast } = useToast();
   const router = useRouter();
@@ -76,7 +74,6 @@ export default function MainAdd({ setClose }: { setClose: any }) {
   const submitEventData = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      console.log(eventCredentials, eventDate, questions);
       setLoading(true);
 
       const urls = await uploadImages(images);
@@ -92,15 +89,16 @@ export default function MainAdd({ setClose }: { setClose: any }) {
           description: "Event Created!",
           title: "Redirecting..",
         });
-        router.push(`/${brandDetails?.username}/${eventCredentials.uniqueName}`);
+        router.push(
+          `/${brandDetails?.username}/${eventCredentials.uniqueName}`
+        );
       } else {
         toast({
           description: "An error has occured",
-          variant: 'destructive'
-        })
+          variant: "destructive",
+        });
       }
       setLoading(false);
-      console.log(submitted);
     } catch (err) {
       toast({
         description: "An error has occured",
@@ -112,7 +110,7 @@ export default function MainAdd({ setClose }: { setClose: any }) {
   };
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setCredentials((prev) => ({
       ...prev,
@@ -135,7 +133,7 @@ export default function MainAdd({ setClose }: { setClose: any }) {
     setCurrent("");
   };
   return (
-    <div className="fixed z-50 overflow-y-scroll backdrop-blur-lg p-5 h-screen w-screen bg-neutral-900/75">
+    <div className="fixed z-50 overflow-y-scroll backdrop-blur-lg p-5 h-screen md:w-full w-screen bg-neutral-900/75">
       <div className="flex items-center">
         <h4 className="text-3xl font-medium">Add an Event</h4>
 
@@ -237,7 +235,7 @@ export default function MainAdd({ setClose }: { setClose: any }) {
             name="title"
             onChange={handleChange}
             placeholder="Phonk Party"
-            className="focus:outline-none border w-full rounded-lg px-5 p-2.5 bg-transparent"
+            className="focus:outline-none border w-full md:w-96 rounded-lg px-5 p-2.5 bg-transparent"
           />
         </div>
         <div className="space-y-1">
@@ -248,20 +246,9 @@ export default function MainAdd({ setClose }: { setClose: any }) {
             onChange={handleChange}
             placeholder="event-name123"
             name="uniqueName"
-            className="border rounded-lg w-full bg-transparent px-5"
+            className="border rounded-lg w-full md:w-96 bg-transparent px-5"
           />
           {loadNames && <Loader2 className="loader" size={14} />}
-        </div>
-        <div className="space-y-1">
-          <h4 className="font-medium">Admin Passphrase</h4>
-          <input
-            required
-            type="password"
-            onChange={handleChange}
-            name="adminPassword"
-            placeholder="Passphrase for Admin access"
-            className="border rounded-lg w-full bg-transparent px-5"
-          />
         </div>
         <div className="space-y-1">
           <h4 className="font-medium">Event Location</h4>
@@ -271,7 +258,7 @@ export default function MainAdd({ setClose }: { setClose: any }) {
             onChange={handleChange}
             name="location"
             placeholder="5 Crest Avenue, New York City"
-            className="border rounded-lg w-full bg-transparent px-5"
+            className="border rounded-lg w-full md:w-96 bg-transparent px-5"
           />
         </div>
         <div className="space-y-1">
@@ -281,7 +268,7 @@ export default function MainAdd({ setClose }: { setClose: any }) {
             name="description"
             rows={3}
             onChange={handleChange}
-            className="border rounded-lg bg-transparent w-full px-5"
+            className="border rounded-lg bg-transparent w-full md:w-96 px-5"
           />
         </div>
         <div className="space-y-1">
@@ -299,7 +286,7 @@ export default function MainAdd({ setClose }: { setClose: any }) {
             type="time"
             name="time"
             onChange={handleChange}
-            className="border rounded-lg w-full bg-transparent px-5"
+            className="border rounded-lg w-full md:w-96 bg-transparent px-5"
           />
         </div>
         <div className="space-y-2.5">
@@ -308,7 +295,7 @@ export default function MainAdd({ setClose }: { setClose: any }) {
             {questions?.map((item, key) => (
               <div
                 key={key}
-                className="border font-light text-sm p-2.5 rounded-lg w-full"
+                className="border font-light text-sm p-2.5 rounded-lg w-full md:w-96"
               >
                 {item}
               </div>
@@ -318,7 +305,7 @@ export default function MainAdd({ setClose }: { setClose: any }) {
                 type="text"
                 value={currentQuestion}
                 onChange={(e) => setCurrent(e.target.value)}
-                className="w-full"
+                className="w-full md:w-96"
               />
               <button
                 type="button"
@@ -333,7 +320,7 @@ export default function MainAdd({ setClose }: { setClose: any }) {
         <button
           disabled={unavailableUsername || loading || loadNames}
           type="submit"
-          className="w-full disabled:bg-neutral-600 rounded-lg px-5 p-2.5 bg-purple-500"
+          className="w-full md:w-96 disabled:bg-neutral-600 rounded-lg px-5 p-2.5 grad text-black font-semibold"
         >
           {loading ? "Adding Event..." : "Add Event"}
         </button>

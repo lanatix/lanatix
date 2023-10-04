@@ -21,9 +21,6 @@ model Event {
   description   String
   questions     String[]
   registered    Json[]
-  attended      Json[]
-  admins        Json[]
-  adminPassword String
   images        String[]
   time          String
 
@@ -36,4 +33,6 @@ model Brand {
   walletAddress String @unique
   username      String @unique
   description   String
+  password String
+  
 }

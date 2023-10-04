@@ -7,7 +7,9 @@ export const POST = async (req: NextRequest) => {
   const { owner, uniqueName, email, fullName, answers } = await req.json();
 
   try {
-    let img = await QRCode.toDataURL(JSON.stringify({ fullName, email, owner, uniqueName }));
+    let img = await QRCode.toDataURL(
+      JSON.stringify({ fullName, email, owner, uniqueName })
+    );
 
     const event = await prisma.event.findUnique({
       where: {
@@ -25,7 +27,7 @@ export const POST = async (req: NextRequest) => {
     if (!event) {
       return NextResponse.json(
         { success: false, message: "Event does not exist" },
-        { status: 401 },
+        { status: 401 }
       );
     }
 
@@ -34,7 +36,7 @@ export const POST = async (req: NextRequest) => {
     ) {
       return NextResponse.json(
         { success: false, message: "User with this email already registered" },
-        { status: 401 },
+        { status: 401 }
       );
     }
 
@@ -47,7 +49,14 @@ export const POST = async (req: NextRequest) => {
       },
       data: {
         registered: {
-          push: { fullName, email, answers },
+          push: {
+            fullName,
+            email,
+            answers,
+            attended: false,
+            owner,
+            uniqueName,
+          },
         },
       },
     });
@@ -59,12 +68,12 @@ export const POST = async (req: NextRequest) => {
         message: `Successfully registered to ${registered.title}. Your ticket has been sent to your email.`,
         data: { image: img },
       },
-      { status: 201 },
+      { status: 201 }
     );
   } catch (err) {
     return NextResponse.json(
       { success: false, message: "A server error occured", error: err },
-      { status: 500 },
+      { status: 500 }
     );
   }
 };

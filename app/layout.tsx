@@ -5,7 +5,7 @@ import { Inter } from "next/font/google";
 import dynamic from "next/dynamic";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/context/theme-provider";
-import { AppProvider } from "@/components/context";
+import { AppProvider, SessionProvider } from "@/components/context";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,14 +30,16 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <ThemeProvider defaultTheme="dark" attribute="class">
-          <Wallet>
-            <AppProvider>
-              {children}
-              <Toaster />
-            </AppProvider>
-          </Wallet>
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider defaultTheme="dark" attribute="class">
+            <Wallet>
+              <AppProvider>
+                {children}
+                <Toaster />
+              </AppProvider>
+            </Wallet>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );

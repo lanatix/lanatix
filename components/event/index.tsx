@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import Register from "./register";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Autoplay, Navigation } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -48,28 +48,19 @@ export default function EventMain({
         });
       }
     }
-    if (
-      eventData?.admins.filter(
-        (item: any) => item.walletAddress === publicKey?.toString(),
-      )
-    ) {
-      setAdmin(true);
-      toast({
-        description: "Admin Priviledges granted.",
-      });
-    }
   }, [brandDetails]);
   const date = new Date(eventData?.date!);
   const time = moment("23:33", "hh:mm").format("LT");
   const calendarFormat = `${date.getFullYear()}-0${date.getMonth()}-${date.getDate()}`;
   // console.log(calendarFormat);
   return (
-    <div className="relative">
+    <div className="relative lg:w-screen lg:h-screen lg:overflow-hidden lg:grid grid-cols-5">
       {register && (
         <Register
           brandName={brandName?.username}
           eventData={eventData}
           setRegister={setRegister}
+          walletAddress={brandDetails?.walletAddress!}
         />
       )}
       {scan && <QR setScan={setScan} />}
@@ -89,7 +80,7 @@ export default function EventMain({
           <QrCode />
         </button>
       )}
-      <div className="relative">
+      <div className="relative h-full col-span-3">
         <div className="image-fade flex flex-col">
           <div className="h-full p-5">
             <div className="flex items-center">
@@ -113,20 +104,27 @@ export default function EventMain({
             </div>
           </div>
           <div className="p-5">
-            <h4 className="font-bold text-neutral-400 text-sm">
+            <h4 className="font-bold text-neutral-400 lg:text-lg text-sm">
               {brandName?.name}
             </h4>
-            <h4 className="font-bold text-3xl">{eventData?.title}</h4>
+            <h4 className="font-bold text-3xl lg:text-5xl">
+              {eventData?.title}
+            </h4>
+            <div className="hidden lg:block">
+              <h4 className="text-xl">{date.toDateString()}</h4>
+              <h4 className="text-lg text-white/60">{time}</h4>
+            </div>
+            <div></div>
           </div>
         </div>
         <img
           src={`https://res.cloudinary.com/dls6ysfrf/image/upload/${eventData?.images[0]}`}
-          className=""
+          className="object-cover h-screen w-full"
           alt=""
         />
       </div>
-      <div className="p-5 py-0 pb-5">
-        <div className="flex ">
+      <div className="p-5 py-0 pb-5 col-span-2 event-right lg:overflow-y-scroll">
+        <div className="flex lg:hidden">
           <div>
             <h4>{date.toDateString()}</h4>
             <h4 className="text-xs text-white/60">{time}</h4>
@@ -150,11 +148,12 @@ export default function EventMain({
           <div className="space-y-2.5">
             <h4 className="font-semibold text-xl">Event Images</h4>
             <Swiper
-              className="relative"
+              className="relative !w-full"
               spaceBetween={30}
               navigation={{ nextEl: ".imageNext", prevEl: ".imagePrev" }}
-              slidesPerView={"auto"}
-              modules={[Navigation]}
+              slidesPerView={1}
+              autoplay
+              modules={[Navigation, Autoplay]}
             >
               <button
                 type="button"
