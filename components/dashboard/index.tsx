@@ -16,23 +16,23 @@ import { Event } from "@prisma/client";
 
 export default function DashboardMain() {
   const [add, setAdd] = useState(false);
-  const { web3auth, loading } = useApp();
-  const [events, setEvents] = useState<Event[]>();
+  const { web3auth, loading, events } = useApp();
+  // const [events, setEvents] = useState<Event[]>();
 
-  useEffect(() => {
-    const fetchDetails = async () => {
-      const userDetails = await web3auth?.getUserInfo();
-      const event = await fetcher(
-        `/api/event/all?owner=${userDetails?.email}`,
-        "GET"
-      );
-      setEvents(event.data);
-      console.log(events);
-    };
-    if (web3auth?.connected) {
-      fetchDetails();
-    }
-  }, [web3auth]);
+  // useEffect(() => {
+  //   const fetchDetails = async () => {
+  //     const userDetails = await web3auth?.getUserInfo();
+  //     const event = await fetcher(
+  //       `/api/event/all?owner=${userDetails?.email}`,
+  //       "GET"
+  //     );
+  //     setEvents(event.data);
+  //     console.log(events);
+  //   };
+  //   if (web3auth?.connected) {
+  //     fetchDetails();
+  //   }
+  // }, [web3auth]);
   return loading ? (
     <Loader />
   ) : (

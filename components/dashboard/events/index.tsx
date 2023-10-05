@@ -16,9 +16,9 @@ export default function ScheduleMain() {
       <Header title="Events" />
 
       {/* body */}
-      <div className="flex px-5 flex-wrap gap-5">
+      <div className="flex md:flex-col px-5 md:flex-wrap gap-5">
         {events?.map((item, i) => (
-          <div key={i} className="w-72">
+          <div key={i} className="md:w-72">
             <EventCard event={item} />
           </div>
         ))}

@@ -1,6 +1,12 @@
 "use client";
 
-import { Calendar, Home, LayoutDashboard, Settings } from "lucide-react";
+import {
+  Bookmark,
+  Calendar,
+  Home,
+  LayoutDashboard,
+  Settings,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
@@ -8,7 +14,7 @@ import { motion } from "framer-motion";
 export default function MobileNav() {
   const pathname = usePathname();
   return (
-    <nav className="md:hidden gap-5 m-auto bg-[#1e1e1e] flex items-center fixed bottom-2.5 rounded-full p-5">
+    <nav className="md:hidden gap-5 m-auto bg-neutral-900 flex items-center fixed bottom-2.5 rounded-full p-5">
       <Link href={"/dashboard"}>
         <button className="space-y-1 flex flex-col items-center">
           <LayoutDashboard />
@@ -20,10 +26,10 @@ export default function MobileNav() {
           )}
         </button>
       </Link>
-      <Link href={"/dashboard/schedule"}>
+      <Link href={"/dashboard/events"}>
         <button className="space-y-1 flex flex-col items-center">
-          <Calendar />
-          {pathname === "/dashboard/schedule" && (
+          <Bookmark />
+          {pathname === "/dashboard/events" && (
             <motion.div
               layoutId="tabLine"
               className="rounded-full w-5 h-1.5 grad"

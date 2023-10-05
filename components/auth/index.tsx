@@ -35,6 +35,9 @@ export default function AuthMain() {
   // };
   const login = async () => {
     await web3auth?.connect();
+    if (web3auth?.connected) {
+      router.push("/dashboard");
+    }
   };
   useEffect(() => {
     if (user) {
