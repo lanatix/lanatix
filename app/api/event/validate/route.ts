@@ -2,19 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/utils/prisma";
 
 export const POST = async (req: NextRequest) => {
-  const { fullName, owner, uniqueName, email } = await req.json();
+  const { id, fullName, email } = await req.json();
 
   try {
     const event = await prisma.event.findUnique({
       where: {
-        owner_uniqueName: {
-          owner,
-          uniqueName,
-        },
+        id,
       },
       select: {
         registered: true,
-        attended: true,
         title: true,
       },
     });
@@ -34,15 +30,9 @@ export const POST = async (req: NextRequest) => {
 
       const attend = await prisma.event.update({
         where: {
-          owner_uniqueName: {
-            owner,
-            uniqueName,
-          },
+          id,
         },
         data: {
-          attended: {
-            push: { fullName, email },
-          },
           registered: filteredRegisteredList,
         },
       });

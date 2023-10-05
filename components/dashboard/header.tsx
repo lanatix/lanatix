@@ -3,12 +3,12 @@ import { Search } from "lucide-react";
 import { useApp } from "../context";
 
 export default function Header({ title }: { title: string }) {
-  const { brandDetails } = useApp();
+  const { user } = useApp();
   return (
     <div className="p-5 border-b flex items-center w-full md:border-0 border-b-neutral-700">
       <h4 className="font-medium text-2xl">{title}</h4>
-      <div className="flex ml-auto gap-5 items-center rounded-full bg-neutral-900  p-2">
-        <div className="relative flex items-center gap-2 p-2 bg-neutral-950 rounded-full">
+      <div className="flex ml-auto gap-5 items-center rounded-full bg-neutral-900 pl-4  p-2">
+        <div className="relative hidden md:flex items-center gap-2 p-2 bg-neutral-950 rounded-full">
           <Search size={18} className="" />
           <input
             type="text"
@@ -17,8 +17,10 @@ export default function Header({ title }: { title: string }) {
           />
         </div>
         <div className="flex gap-2.5 font-semibold items-center">
-          <h4>{brandDetails?.name}</h4>
-          <div className="p-4 rounded-full bg-black"></div>
+          <h4>{user?.name}</h4>
+          <div className="w-8 h-8 rounded-full">
+            <img className="w-full rounded-full" src={user?.profileImage} />
+          </div>
         </div>
       </div>
     </div>

@@ -17,22 +17,9 @@ model Event {
   date          DateTime
   fee           Int?
   owner         String
-  uniqueName    String
   description   String
   questions     String[]
   registered    Json[]
   images        String[]
   time          String
-
-  @@unique([owner, uniqueName])
-}
-
-model Brand {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  walletAddress String @unique
-  username      String @unique
-  description   String
-  password String
-  
 }

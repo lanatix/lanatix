@@ -29,43 +29,22 @@ interface Event {
   location: string;
   time: string;
   owner: string;
-  uniqueName: string;
   description: string;
 }
 
 export default function MainAdd({ setClose }: { setClose: any }) {
-  const [usernames, setUsernames] = useState<{ uniqueName: string }[]>([]);
-  const [loadNames, setLoadNames] = useState(true);
-  const { brandDetails } = useApp();
+  const { user } = useApp();
   const [eventDate, setDate] = useState<Date | undefined>(new Date());
   const [questions, setQuestions] = useState<string[]>([]);
   const [currentQuestion, setCurrent] = useState("");
   const [images, setImages] = useState<any[]>([]);
-  const [unavailableUsername, setUnavailable] = useState(false);
-
-  // load usernames
-  useEffect(() => {
-    const fetchNames = async () => {
-      const { data } = await fetcher(
-        `/api/event/names?owner=${brandDetails?.username}`,
-        "GET"
-      );
-      console.log(data);
-      setUsernames(data);
-      setLoadNames(false);
-    };
-    fetchNames();
-  }, []);
-
-  const { publicKey } = useWallet();
   const [loading, setLoading] = useState(false);
   const initialState: Event = {
     title: "",
     location: "",
     time: "",
-    owner: brandDetails?.username!,
+    owner: user?.email!,
     description: "",
-    uniqueName: "",
   };
   const { toast } = useToast();
   const router = useRouter();
@@ -89,9 +68,7 @@ export default function MainAdd({ setClose }: { setClose: any }) {
           description: "Event Created!",
           title: "Redirecting..",
         });
-        router.push(
-          `/${brandDetails?.username}/${eventCredentials.uniqueName}`
-        );
+        router.push(`/${submitted.data.id}`);
       } else {
         toast({
           description: "An error has occured",
@@ -116,16 +93,6 @@ export default function MainAdd({ setClose }: { setClose: any }) {
       ...prev,
       [e.target.name]: e.target.value,
     }));
-    if (e.target.name === "uniqueName") {
-      if (
-        usernames.filter((item) => item.uniqueName === e.target.value)
-          .length !== 0
-      ) {
-        setUnavailable(true);
-      } else {
-        setUnavailable(false);
-      }
-    }
   };
 
   const addQuestion = () => {
@@ -133,7 +100,7 @@ export default function MainAdd({ setClose }: { setClose: any }) {
     setCurrent("");
   };
   return (
-    <div className="fixed z-50 overflow-y-scroll backdrop-blur-lg p-5 h-screen md:w-full w-screen bg-neutral-900/75">
+    <div className="absolute z-50 overflow-y-scroll backdrop-blur-lg p-5 h-screen md:w-full w-screen md:left-0 bg-neutral-900/75">
       <div className="flex items-center">
         <h4 className="text-3xl font-medium">Add an Event</h4>
 
@@ -145,6 +112,57 @@ export default function MainAdd({ setClose }: { setClose: any }) {
         </button>
       </div>
       <form onSubmit={submitEventData} className="space-y-5 mt-5 w-full">
+        <div className="space-y-1">
+          <h4 className="font-medium">Event Title</h4>
+          <input
+            required
+            type="text"
+            name="title"
+            onChange={handleChange}
+            placeholder="Phonk Party"
+            className="focus:outline-none border w-full md:w-96 rounded-lg px-5 p-2.5 bg-transparent"
+          />
+        </div>
+        <div className="space-y-1">
+          <h4 className="font-medium">Event Description</h4>
+          <textarea
+            required
+            name="description"
+            rows={3}
+            onChange={handleChange}
+            className="border rounded-lg bg-transparent w-full md:w-96 px-5"
+          />
+        </div>
+        <div className="space-y-1">
+          <h4 className="font-medium">Event Location</h4>
+          <input
+            required
+            type="text"
+            onChange={handleChange}
+            name="location"
+            placeholder="5 Crest Avenue, New York City"
+            className="border rounded-lg w-full md:w-96 bg-transparent px-5"
+          />
+        </div>
+        <div className="space-y-1">
+          <h4 className="font-medium">Event Date</h4>
+          <Calendar
+            mode="single"
+            selected={eventDate}
+            onSelect={setDate}
+            className="w-full m-auto"
+          />
+        </div>
+        <div className="space-y-1">
+          <h4 className="font-medium">Event Time</h4>
+          <input
+            type="time"
+            name="time"
+            onChange={handleChange}
+            className="border rounded-lg w-full md:w-96 bg-transparent px-5"
+          />
+        </div>
+        <h4 className="font-medium">Event Images</h4>
         <ImageUploading
           multiple
           value={images}
@@ -186,7 +204,7 @@ export default function MainAdd({ setClose }: { setClose: any }) {
                 slidesPerView={1}
                 modules={[Navigation]}
                 navigation={{ nextEl: ".imageNext", prevEl: ".imagePrev" }}
-                className="relative"
+                className="relative w-full"
               >
                 <button
                   type="button"
@@ -227,68 +245,6 @@ export default function MainAdd({ setClose }: { setClose: any }) {
             </div>
           )}
         </ImageUploading>
-        <div className="space-y-1">
-          <h4 className="font-medium">Event Title</h4>
-          <input
-            required
-            type="text"
-            name="title"
-            onChange={handleChange}
-            placeholder="Phonk Party"
-            className="focus:outline-none border w-full md:w-96 rounded-lg px-5 p-2.5 bg-transparent"
-          />
-        </div>
-        <div className="space-y-1">
-          <h4 className="font-medium">Unique Name</h4>
-          <input
-            required
-            type="text"
-            onChange={handleChange}
-            placeholder="event-name123"
-            name="uniqueName"
-            className="border rounded-lg w-full md:w-96 bg-transparent px-5"
-          />
-          {loadNames && <Loader2 className="loader" size={14} />}
-        </div>
-        <div className="space-y-1">
-          <h4 className="font-medium">Event Location</h4>
-          <input
-            required
-            type="text"
-            onChange={handleChange}
-            name="location"
-            placeholder="5 Crest Avenue, New York City"
-            className="border rounded-lg w-full md:w-96 bg-transparent px-5"
-          />
-        </div>
-        <div className="space-y-1">
-          <h4 className="font-medium">Event Description</h4>
-          <textarea
-            required
-            name="description"
-            rows={3}
-            onChange={handleChange}
-            className="border rounded-lg bg-transparent w-full md:w-96 px-5"
-          />
-        </div>
-        <div className="space-y-1">
-          <h4 className="font-medium">Event Date</h4>
-          <Calendar
-            mode="single"
-            selected={eventDate}
-            onSelect={setDate}
-            className="w-full m-auto"
-          />
-        </div>
-        <div className="space-y-1">
-          <h4 className="font-medium">Event Time</h4>
-          <input
-            type="time"
-            name="time"
-            onChange={handleChange}
-            className="border rounded-lg w-full md:w-96 bg-transparent px-5"
-          />
-        </div>
         <div className="space-y-2.5">
           <h4 className="font-medium">Custom Questions</h4>
           <div className="space-y-2.5 text-sm">
@@ -318,9 +274,9 @@ export default function MainAdd({ setClose }: { setClose: any }) {
           </div>
         </div>
         <button
-          disabled={unavailableUsername || loading || loadNames}
+          disabled={loading}
           type="submit"
-          className="w-full md:w-96 disabled:bg-neutral-600 rounded-lg px-5 p-2.5 grad text-black font-semibold"
+          className="w-full md:w-96 disabled:bg-neutral-600 rounded-lg px-5 p-2.5 grad font-semibold"
         >
           {loading ? "Adding Event..." : "Add Event"}
         </button>

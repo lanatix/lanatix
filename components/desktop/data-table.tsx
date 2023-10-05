@@ -23,15 +23,13 @@ import { useState } from "react";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  brandName: string;
-  eventName: string;
+  id: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  brandName,
-  eventName,
+  id,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
@@ -109,7 +107,7 @@ export function DataTable<TData, TValue>({
                     <button
                       onClick={() => {
                         navigator.clipboard.writeText(
-                          `http://lanatix.netlify.app/${brandName}/${eventName}`
+                          `http://lanatix.netlify.app/${id}`
                         );
                       }}
                       className="flex text-neutral-400 text-xs text-center items-center gap-2.5"

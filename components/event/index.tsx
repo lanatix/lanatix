@@ -22,33 +22,22 @@ import "swiper/css";
 import "swiper/css/navigation";
 import QR from "./qr";
 import { useWallet } from "@solana/wallet-adapter-react";
-import Authorise from "./authorise";
 
-export default function EventMain({
-  eventData,
-  brandName,
-}: {
-  eventData: Event | null;
-  brandName: { name: string; username: string } | null;
-}) {
+export default function EventMain({ eventData }: { eventData: Event | null }) {
   const [admin, setAdmin] = useState(false);
-  const { brandDetails } = useApp();
-  const { toast } = useToast();
   const [register, setRegister] = useState(false);
   const [scan, setScan] = useState(false);
-  const [authorise, setAuthorise] = useState(false);
-  const { publicKey } = useWallet();
 
-  useEffect(() => {
-    if (brandDetails) {
-      if (brandDetails.username === eventData?.owner) {
-        setAdmin(true);
-        toast({
-          description: "Admin Priviledges granted.",
-        });
-      }
-    }
-  }, [brandDetails]);
+  // useEffect(() => {
+  //   if (user) {
+  //     if (user.email === eventData?.owner) {
+  //       setAdmin(true);
+  //       toast({
+  //         description: "Admin Priviledges granted.",
+  //       });
+  //     }
+  //   }
+  // }, [user]);
   const date = new Date(eventData?.date!);
   const time = moment("23:33", "hh:mm").format("LT");
   const calendarFormat = `${date.getFullYear()}-0${date.getMonth()}-${date.getDate()}`;
@@ -57,21 +46,12 @@ export default function EventMain({
     <div className="relative lg:w-screen lg:h-screen lg:overflow-hidden lg:grid grid-cols-5">
       {register && (
         <Register
-          brandName={brandName?.username}
+          id={eventData?.id}
           eventData={eventData}
           setRegister={setRegister}
-          walletAddress={brandDetails?.walletAddress!}
         />
       )}
       {scan && <QR setScan={setScan} />}
-      {authorise && (
-        <Authorise
-          setAdmin={setAdmin}
-          setAuthorise={setAuthorise}
-          owner={eventData?.owner!}
-          uniqueName={eventData?.uniqueName!}
-        />
-      )}
       {admin && (
         <button
           onClick={() => setScan(true)}
@@ -86,14 +66,6 @@ export default function EventMain({
             <div className="flex items-center">
               <h4 className="font-bold text-3xl">lanatix</h4>
               <div className="flex ml-auto items-center gap-5">
-                {!admin && (
-                  <button
-                    onClick={() => setAuthorise(true)}
-                    className=" rounded-full p-2.5 grad text-black"
-                  >
-                    <Lock size={20} />
-                  </button>
-                )}{" "}
                 <button
                   onClick={() => setRegister(true)}
                   className=" rounded-full p-2.5 grad text-black"
@@ -104,9 +76,6 @@ export default function EventMain({
             </div>
           </div>
           <div className="p-5">
-            <h4 className="font-bold text-neutral-400 lg:text-lg text-sm">
-              {brandName?.name}
-            </h4>
             <h4 className="font-bold text-3xl lg:text-5xl">
               {eventData?.title}
             </h4>
@@ -140,7 +109,6 @@ export default function EventMain({
               name={eventData?.title}
               description={eventData?.description}
               options={["Google", "Apple"]}
-              organizer={brandName?.name}
             />
           </div>
         </div>

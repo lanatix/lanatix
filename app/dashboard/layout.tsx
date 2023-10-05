@@ -16,7 +16,7 @@ export default function DashboardLayout({
   return (
     <div className="bg-neutral-900 relative w-screen overflow-hidden flex flex-col md:flex-row items-center md:justify-normal justify-center md:h-screen min-h-screen">
       <DeskNav />
-      <div className="w-full">{children}</div>
+      <div className="w-full relative">{children}</div>
       <MobileNav />
     </div>
   );

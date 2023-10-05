@@ -4,19 +4,14 @@ import { NextRequest, NextResponse } from "next/server";
 import QRCode from "qrcode";
 
 export const POST = async (req: NextRequest) => {
-  const { owner, uniqueName, email, fullName, answers } = await req.json();
+  const { id, email, fullName, answers } = await req.json();
 
   try {
-    let img = await QRCode.toDataURL(
-      JSON.stringify({ fullName, email, owner, uniqueName })
-    );
+    let img = await QRCode.toDataURL(JSON.stringify({ fullName, email, id }));
 
     const event = await prisma.event.findUnique({
       where: {
-        owner_uniqueName: {
-          owner,
-          uniqueName,
-        },
+        id,
       },
       select: {
         registered: true,
@@ -42,10 +37,7 @@ export const POST = async (req: NextRequest) => {
 
     const registered = await prisma.event.update({
       where: {
-        owner_uniqueName: {
-          owner,
-          uniqueName,
-        },
+        id,
       },
       data: {
         registered: {
@@ -54,8 +46,6 @@ export const POST = async (req: NextRequest) => {
             email,
             answers,
             attended: false,
-            owner,
-            uniqueName,
           },
         },
       },

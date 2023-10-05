@@ -7,7 +7,7 @@ export default function EventCard({ event }: { event: Event }) {
   const date = new Date(event.date);
   return (
     <Link
-      href={`/dashboard/events/${event.uniqueName}`}
+      href={`/dashboard/events/${event.id}`}
       className="h-56 w-full relative"
     >
       <div className="absolute bg-[#1e1e1e]/50 rounded-xl top-0 bottom-o left-0 p-5 right-0 h-full w-full flex flex-col">

@@ -5,42 +5,35 @@ import { fetcher } from "@/utils/fetch";
 import { Event } from "@prisma/client";
 import Loader from "@/app/dashboard/loading";
 import Header from "../dashboard/header";
-import { RefreshCcw, Users2 } from "lucide-react";
+import { QrCode, RefreshCcw, Users2 } from "lucide-react";
 import { Doughnut } from "react-chartjs-2";
 import { ArcElement, Chart } from "chart.js";
 import { DataTable } from "../desktop/data-table";
 import { Attendee, columns } from "../desktop/columns";
+import QR from "./qr";
 
-export default function EventDashboard({ name }: { name: string }) {
-  const { brandDetails } = useApp();
+export default function EventDashboard({ id }: { id: string }) {
+  const { user, web3auth } = useApp();
   const [loading, setLoading] = useState(true);
   const [eventData, setEventData] = useState<Event>();
+  const [scan, setScan] = useState(false);
 
   useEffect(() => {
     const fetchEventData = async () => {
-      const { data } = await fetcher(
-        `/api/event?owner=${brandDetails?.username}&name=${name}`,
-        "GET"
-      );
+      // const email = (await web3auth?.getUserInfo())!.email;
+      const { data } = await fetcher(`/api/event?id=${id}`, "GET");
       setEventData(data);
       setLoading(false);
     };
-    if (brandDetails) {
-      fetchEventData();
-    }
+    fetchEventData();
     Chart.register(ArcElement);
-  }, [brandDetails]);
+  }, [user]);
 
   const refreshData = async () => {
-    if (brandDetails) {
-      setLoading(true);
-      const { data } = await fetcher(
-        `/api/event?owner=${brandDetails?.username}&name=${name}`,
-        "GET"
-      );
-      setEventData(data);
-      setLoading(false);
-    }
+    setLoading(true);
+    const { data } = await fetcher(`/api/event?id=${id}`, "GET");
+    setEventData(data);
+    setLoading(false);
   };
 
   const attended = eventData?.registered.filter(
@@ -52,13 +45,14 @@ export default function EventDashboard({ name }: { name: string }) {
   return loading ? (
     <Loader />
   ) : (
-    <div className="h-screen overflow-y-scroll dashboard-scroll bg-neutral-950 w-full">
+    <div className="h-screen overflow-y-scroll relative dashboard-scroll bg-neutral-950 w-full">
+      {scan && <QR setScan={setScan} />}
       {/* header */}
       <Header title={`${eventData?.title}`} />
-      <div className="grid grid-cols-6 px-5">
+      <div className="md:grid grid-cols-6 px-5">
         <div className="cols-span-4">
-          <div className="flex gap-10">
-            <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-10">
+            <div className="flex md:flex-col flex-row order-2 md:order-none gap-2.5">
               <div className=" p-5 bg-neutral-900 rounded-2xl flex gap-2.5">
                 <div className="p-5 shadow-xl rounded-xl green-bg">
                   <Users2 />
@@ -113,7 +107,7 @@ export default function EventDashboard({ name }: { name: string }) {
         </div>
       </div>
       <div className="p-5 space-y-5 mt-10">
-        <div className="flex items-center">
+        <div className="md:flex hidden items-center">
           <h4 className="font-semibold text-2xl">Attendee Data</h4>
           <button
             onClick={refreshData}
@@ -122,12 +116,22 @@ export default function EventDashboard({ name }: { name: string }) {
             <RefreshCcw size={20} />
           </button>
         </div>
-        <DataTable
-          brandName={eventData?.owner as string}
-          eventName={eventData?.uniqueName as string}
-          columns={columns}
-          data={eventData?.registered as Attendee[]}
-        />
+        <div className="hidden md:block">
+          <DataTable
+            id={id}
+            columns={columns}
+            data={eventData?.registered as Attendee[]}
+          />
+        </div>
+        <div className="md:hidden flex items-center flex-col gap-2.5 w-full">
+          <button
+            onClick={() => setScan(true)}
+            className="w-fit p-2 rounded-xl grad"
+          >
+            <QrCode size={150} />
+          </button>
+          <h4 className="text-center">Click to scan ticket</h4>
+        </div>
       </div>
     </div>
   );

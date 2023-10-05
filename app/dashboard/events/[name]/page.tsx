@@ -5,5 +5,5 @@ export default function EventDashboard({
 }: {
   params: { name: string };
 }) {
-  return <Dashboard name={params.name} />;
+  return <Dashboard id={params.name} />;
 }

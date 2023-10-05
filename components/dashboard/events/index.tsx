@@ -9,8 +9,7 @@ import EventCard from "../event";
 import { Event } from "@prisma/client";
 
 export default function ScheduleMain() {
-  const [loading, setLoading] = useState(false);
-  const { brandDetails, events } = useApp();
+  const { events } = useApp();
   return (
     <div className="min-h-screen bg-neutral-950 w-full">
       {/* header */}

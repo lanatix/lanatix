@@ -10,7 +10,7 @@ export default function QR({ setScan }: { setScan: any }) {
   const [result, setResult] = useState<{
     fullName: string;
     owner: string;
-    uniqueName: string;
+    id: string;
     email: string;
   }>();
 

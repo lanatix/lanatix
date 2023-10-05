@@ -32,12 +32,12 @@ export default function RootLayout({
       <body>
         <SessionProvider>
           <ThemeProvider defaultTheme="dark" attribute="class">
-            <Wallet>
-              <AppProvider>
-                {children}
-                <Toaster />
-              </AppProvider>
-            </Wallet>
+            {/* <Wallet> */}
+            <AppProvider>
+              {children}
+              <Toaster />
+            </AppProvider>
+            {/* </Wallet> */}
           </ThemeProvider>
         </SessionProvider>
       </body>

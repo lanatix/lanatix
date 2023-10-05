@@ -3,197 +3,57 @@ import { Wallet, useWallet, useConnection } from "@solana/wallet-adapter-react";
 import tickets from "../../assets/images/tickets.png";
 import Image from "next/image";
 import { ChangeEvent, useState, useEffect } from "react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { fetcher } from "@/utils/fetch";
-import { PublicKey } from "@solana/web3.js";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
 import AuthLoader from "./loader";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { useApp } from "../context";
 
-export default function AuthMain({
-  usernames,
-}: {
-  usernames: { username: string }[];
-}) {
+export default function AuthMain() {
   const { toast } = useToast();
   const router = useRouter();
 
-  const initialState = {
-    name: "",
-    description: "",
-    username: "",
-    password: "",
-  };
+  const { web3auth, user } = useApp();
   const [newUser, setNewUser] = useState(true);
-  const [credentials, setCredentials] = useState(initialState);
-  const [unavailableUsername, setUnavailable] = useState(false);
+  // const [credentials, setCredentials] = useState(initialState);
+  // const [unavailableUsername, setUnavailable] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { data: session, status } = useSession();
-
-  const { publicKey, disconnect } = useWallet();
-  const { connection } = useConnection();
-  useEffect(() => {
-    async function submitBrand(walletAddress: string) {
-      if (newUser) {
-        setLoading(true);
-        const submitted = await fetcher("/api/brand/create", "POST", {
-          walletAddress,
-          ...credentials,
-        }).catch(() => setLoading(false));
-        if (submitted.success) {
-          toast({
-            description: "Authenticated",
-          });
-        }
-        setLoading(false);
-        router.push("/dashboard");
-      } else {
-        setLoading(true);
-        const loggedIn = await fetcher("/api/brand", "POST", {
-          walletAddress,
-        });
-        if (!loggedIn.success) {
-          await disconnect();
-          setLoading(false);
-          toast({
-            description: "Account doesn't exist. Please sign up",
-            variant: "destructive",
-          });
-          setLoading(false);
-        } else {
-          toast({
-            description: loggedIn.message,
-          });
-          router.push("/dashboard");
-          setLoading(false);
-        }
-      }
-    }
-    if (publicKey || session) {
-      submitBrand(
-        (publicKey?.toString() as string) ||
-          (session?.user.walletAddress as string)
-      );
-    }
-  }, [publicKey, session]);
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setCredentials((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    if (e.target.name === "username") {
-      if (
-        usernames.filter((item) => item.username === e.target.value).length > 0
-      ) {
-        setUnavailable(true);
-      } else {
-        setUnavailable(false);
-      }
-    }
+  // const handleChange = (
+  //   e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  // ) => {
+  //   setCredentials((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  //   if (e.target.name === "username") {
+  //     if (
+  //       usernames.filter((item) => item.username === e.target.value).length > 0
+  //     ) {
+  //       setUnavailable(true);
+  //     } else {
+  //       setUnavailable(false);
+  //     }
+  //   }
+  // };
+  const login = async () => {
+    await web3auth?.connect();
   };
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard");
+    }
+  }, [web3auth]);
   return (
     <div className="grid h-full relative md:grid-cols-2 items-center">
       {loading && <AuthLoader />}
       <div className="md:px-20">
-        <h4 className="font-semibold text-4xl">
+        <h4 className="font-semibold text-center text-4xl">
           {newUser ? "Hello there👋" : "Welcome back👋"}
         </h4>
-        {newUser && (
-          <p className="font-light text-sm">Let's get you started right away</p>
-        )}
-        <form
-          action=""
-          onSubmit={(e) => {
-            e.preventDefault();
-          }}
-          className="mt-10 w-full"
+        <button
+          onClick={login}
+          className="font-semibold mt-5 py-2.5 w-full rounded-lg grad text-black "
         >
-          {newUser && (
-            <div className="space-y-5 w-full">
-              <div className="space-y-1">
-                <h4 className="text-sm">Unique Username</h4>
-                <input
-                  required
-                  type="text"
-                  onChange={handleChange}
-                  name="username"
-                  className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
-                />
-                {unavailableUsername && (
-                  <h4 className="text-red-500 text-sm">
-                    Username already taken
-                  </h4>
-                )}
-              </div>
-              <div className="space-y-1">
-                <h4 className="text-sm">Admin Password</h4>
-                <input
-                  required
-                  type="password"
-                  onChange={handleChange}
-                  name="password"
-                  className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
-                />
-              </div>
-              <div className="space-y-1">
-                <h4 className="text-sm">Brand Name</h4>
-                <input
-                  required
-                  type="text"
-                  onChange={handleChange}
-                  name="name"
-                  className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
-                />
-              </div>
-              <div className="space-y-1">
-                <h4 className="text-sm">Brand Description</h4>
-                <textarea
-                  required
-                  name="description"
-                  onChange={handleChange}
-                  rows={3}
-                  className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
-                />
-              </div>
-            </div>
-          )}
-          <button
-            type="button"
-            className="font-light"
-            onClick={() => {
-              setUnavailable(false);
-              setNewUser(!newUser);
-            }}
-          >
-            {newUser
-              ? "Already have an account? Sign In"
-              : "Don't have an account? Sign up"}
-          </button>
-          <div className="mt-10 flex flex-col items-center justify-center w-full space-y-5">
-            <WalletMultiButton
-              disabled={
-                (unavailableUsername ||
-                  credentials.username === "" ||
-                  credentials.description === "" ||
-                  credentials.name === "") &&
-                newUser
-              }
-              className=" rounded-full wallet-button"
-            />
-            <div className="flex flex-col w-full items-center gap-2.5">
-              <h4>or</h4>
-              <Link href={"/auth/admin"} className="w-full">
-                <button
-                  className="rounded-lg border w-full py-2.5 border-white/30"
-                  type="button"
-                >
-                  Sign in as Admin
-                </button>
-              </Link>
-            </div>
-          </div>
-        </form>
+          Log in
+        </button>
       </div>
       <div className="md:bg-black md:h-full rounded-[40px] bottom-0 -z-10 md:z-10 absolute md:relative">
         <Image
@@ -205,3 +65,142 @@ export default function AuthMain({
     </div>
   );
 }
+{
+  /* <form
+  action=""
+  onSubmit={(e) => {
+    e.preventDefault();
+  }}
+  className="mt-10 w-full"
+>
+  {newUser && (
+    <div className="space-y-5 w-full">
+      <div className="space-y-1">
+        <h4 className="text-sm">Unique Username</h4>
+        <input
+          required
+          type="text"
+          onChange={handleChange}
+          name="username"
+          className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
+        />
+        {unavailableUsername && (
+          <h4 className="text-red-500 text-sm">
+            Username already taken
+          </h4>
+          )}
+      </div>
+      <div className="space-y-1">
+        <h4 className="text-sm">Admin Password</h4>
+        <input
+          required
+          type="password"
+          onChange={handleChange}
+          name="password"
+          className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
+        />
+      </div>
+      <div className="space-y-1">
+        <h4 className="text-sm">Brand Name</h4>
+        <input
+          required
+          type="text"
+          onChange={handleChange}
+          name="name"
+          className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
+          />
+      </div>
+      <div className="space-y-1">
+        <h4 className="text-sm">Brand Description</h4>
+        <textarea
+          required
+          name="description"
+          onChange={handleChange}
+          rows={3}
+          className="w-full focus:outline-none rounded-2xl p-3 bg-neutral-900"
+          />
+      </div>
+    </div>
+  )}
+  <button
+    type="button"
+    className="font-light"
+    onClick={() => {
+      setUnavailable(false);
+      setNewUser(!newUser);
+    }}
+    >
+    {newUser
+      ? "Already have an account? Sign In"
+      : "Don't have an account? Sign up"}
+  </button>
+  <div className="mt-10 flex flex-col items-center justify-center w-full space-y-5">
+    <WalletMultiButton
+    disabled={
+        (unavailableUsername ||
+          credentials.username === "" ||
+          credentials.description === "" ||
+          credentials.name === "") &&
+        newUser
+      }
+      className=" rounded-full wallet-button"
+      />
+    <div className="flex flex-col w-full items-center gap-2.5">
+      <h4>or</h4>
+      <Link href={"/auth/admin"} className="w-full">
+        <button
+        className="rounded-lg border w-full py-2.5 border-white/30"
+        type="button"
+        >
+          Sign in as Admin
+          </button>
+          </Link>
+    </div>
+  </div>
+</form> */
+}
+
+// useEffect(() => {
+//   async function submitBrand(walletAddress: string) {
+//     if (newUser) {
+//       setLoading(true);
+//       const submitted = await fetcher("/api/brand/create", "POST", {
+//         walletAddress,
+//         ...credentials,
+//       }).catch(() => setLoading(false));
+//       if (submitted.success) {
+//         toast({
+//           description: "Authenticated",
+//         });
+//       }
+//       setLoading(false);
+//       router.push("/dashboard");
+//     } else {
+//       setLoading(true);
+//       const loggedIn = await fetcher("/api/brand", "POST", {
+//         walletAddress,
+//       });
+//       if (!loggedIn.success) {
+//         await disconnect();
+//         setLoading(false);
+//         toast({
+//           description: "Account doesn't exist. Please sign up",
+//           variant: "destructive",
+//         });
+//         setLoading(false);
+//       } else {
+//         toast({
+//           description: loggedIn.message,
+//         });
+//         router.push("/dashboard");
+//         setLoading(false);
+//       }
+//     }
+//   }
+//   if (publicKey || session) {
+//     submitBrand(
+//       (publicKey?.toString() as string) ||
+//         (session?.user.walletAddress as string)
+//     );
+//   }
+// }, [publicKey, session]);

@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { useApp } from "../context";
 
 export default function DeskNav() {
-  const { logOut } = useApp();
   const pathname = usePathname();
   const links = [
     {
@@ -82,10 +81,7 @@ export default function DeskNav() {
           })}
         </div>
         <div className="w-full p-5 shrink-0">
-          <button
-            onClick={logOut}
-            className="px-5 font-medium flex items-center gap-2.5 text-sm  text-black rounded p-2.5 w-full grad"
-          >
+          <button className="px-5 font-medium flex items-center gap-2.5 text-sm  text-black rounded p-2.5 w-full grad">
             <LogOut size={20} />
             Log Out
           </button>

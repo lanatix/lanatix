@@ -3,38 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 
 export const POST = async (req: NextRequest) => {
-  const {
-    questions,
-    uniqueName,
-    owner,
-    title,
-    description,
-    location,
-    date,
-    time,
-    images,
-  } = await req.json();
+  const { questions, owner, title, description, location, date, time, images } =
+    await req.json();
 
   try {
-    const alreadyExist = await prisma.event.findUnique({
-      where: {
-        owner_uniqueName: {
-          owner,
-          uniqueName,
-        },
-      },
-    });
-
-    if (alreadyExist) {
-      return NextResponse.json(
-        { success: false, message: "Event with unique name already exists" },
-        { status: 401 }
-      );
-    }
-
     const created = await prisma.event.create({
       data: {
-        uniqueName,
         owner,
         registered: [],
         images,
@@ -51,6 +25,7 @@ export const POST = async (req: NextRequest) => {
       {
         success: true,
         message: "Event created successfully",
+        data: { id: created.id },
       },
       { status: 201 }
     );
