@@ -24,7 +24,7 @@ export default function Register({
   id: string | undefined;
   eventData: Event | null;
 }) {
-  const initialState = { fullName: "", email: "" };
+  const initialState = { fullName: "", email: "", walletAddress: "" };
   const [credentials, setCredentials] = useState(initialState);
   const initialAnswers = eventData?.questions.reduce(
     (prev, key) => ({ ...prev, [key]: "" }),
@@ -98,6 +98,19 @@ export default function Register({
                 className="w-full border-white/10"
                 name="email"
                 placeholder="johndoe@email.com"
+                onChange={handleChange}
+              />
+            </div>
+            <div className="space-y-1">
+              <h4 className="font-medium text-sm">
+                Solana Wallet Address(for NFT ticket)
+              </h4>
+              <input
+                type="text"
+                required
+                className="w-full border-white/10"
+                name="walletAddress"
+                placeholder="Your solana wallet address"
                 onChange={handleChange}
               />
             </div>

@@ -2,9 +2,16 @@ import { sendTicketEmail } from "@/utils/mailer";
 import prisma from "@/utils/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import QRCode from "qrcode";
-
+import axios from "axios";
+import fetch from "node-fetch";
 export const POST = async (req: NextRequest) => {
-  const { id, email, fullName, answers } = await req.json();
+  const { id, email, fullName, answers, walletAddress } = await req.json();
+
+  const headerConfig = {
+    accept: "application/json",
+    "content-type": "application/json",
+    Authorization: "Bearer 8efa6236ee5c0c.a3ce50dc488e4e669157fc6aa3f5b0b7",
+  };
 
   try {
     let img = await QRCode.toDataURL(JSON.stringify({ fullName, email, id }));
@@ -50,7 +57,16 @@ export const POST = async (req: NextRequest) => {
         },
       },
     });
-
+    await fetch("https://devnet.underdogprotocol.com/v2/projects/1/nfts", {
+      headers: headerConfig,
+      method: "POST",
+      body: JSON.stringify({
+        name: "Test",
+        image: img,
+        receiverAddress: walletAddress,
+        description: `Your Lanatix ticket for ${event.title}`,
+      }),
+    });
     await sendTicketEmail(email, img, event.title);
     return NextResponse.json(
       {

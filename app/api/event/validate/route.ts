@@ -5,7 +5,7 @@ export const POST = async (req: NextRequest) => {
   const { id, fullName, email } = await req.json();
 
   try {
-    const event = await prisma.event.findUnique({
+    const event: any = await prisma.event.findUnique({
       where: {
         id,
       },
@@ -19,6 +19,15 @@ export const POST = async (req: NextRequest) => {
       event?.registered.filter((item: any) => item?.email === email).length !==
       0
     ) {
+      if (
+        event?.registered.filter((item: any) => item.email === email)[0]
+          ?.attended === true
+      ) {
+        return NextResponse.json(
+          { success: false, message: "User has already attended the event" },
+          { status: 201 }
+        );
+      }
       const filteredRegisteredList: any = event?.registered.filter(
         (item: any) => {
           if (item?.email === email) {

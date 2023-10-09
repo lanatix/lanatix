@@ -22,4 +22,5 @@ model Event {
   registered    Json[]
   images        String[]
   time          String
+  underdogDetails Json?
 }
