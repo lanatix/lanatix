@@ -54,7 +54,8 @@ export default function DeskNav() {
   return (
     <div className="bg-neutral-900 hidden shrink-0 md:flex flex-col h-full">
       <div className="p-5 tracking-wider">
-        <h4 className="text-2xl font-semibold">lanatix</h4>
+        {/* <h4 className="text-2xl font-semibold">lanatix</h4> */}
+        <img src="/logo.svg" className="w-7 mx-auto" alt="" />
       </div>
       <div className="flex mt-10 flex-col h-full">
         <div className="grow space-y-2.5 w-full">

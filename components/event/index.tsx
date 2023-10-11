@@ -64,7 +64,8 @@ export default function EventMain({ eventData }: { eventData: Event | null }) {
         <div className="image-fade flex flex-col">
           <div className="h-full p-5">
             <div className="flex items-center">
-              <h4 className="font-bold text-3xl">lanatix</h4>
+              {/* <h4 className="font-bold text-3xl">lanatix</h4> */}
+              <img src="/logo.svg" className="w-10" alt="" />
               <div className="flex ml-auto items-center gap-5">
                 <button
                   onClick={() => setRegister(true)}
