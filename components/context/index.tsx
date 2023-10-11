@@ -16,6 +16,9 @@ type AppState = {
   setEvents: any;
   web3auth: Web3Auth | null | undefined;
   user: Partial<UserInfo> | null | undefined;
+  setUser: any;
+  connected: boolean;
+  setConnected: any;
 };
 
 export const AppContext = createContext<AppState | null>(null);
@@ -37,6 +40,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<Partial<UserInfo>>();
   const [events, setEvents] = useState<Event[]>([]);
+  const [connected, setConnected] = useState(false);
 
   const clientId =
     "BGnZrS0WLQwi_ornEpW9N_ZIJpvqd2aEw7mZCdTpLgtuwrViB3UleYh5jbH7JlUPjb3H3y9X0rqGZ3G8zQCmnAw";
@@ -59,16 +63,19 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
           // uiConfig refers to the whitelabeling options, which is available only on Growth Plan and above
           // Please remove this parameter if you're on the Base Plan
         });
-        await web3authInstance.initModal();
-        // const userDetails = await web3authInstance.getUserInfo();
-        // setUser(userDetails);
-        setWeb3Auth(web3authInstance);
-        if (web3authInstance.connected) {
-          const userDetails = await web3authInstance.getUserInfo();
-          if (!userDetails) {
-            setUser(userDetails);
-          }
-          await fetchEvents(userDetails.email!);
+        if (!web3auth) {
+          await web3authInstance.initModal();
+          // const userDetails = await web3authInstance.getUserInfo();
+          // setUser(userDetails);
+          // if (!web3auth) {
+          setWeb3Auth(web3authInstance);
+        }
+        // }
+        if (web3auth?.connected || connected) {
+          setConnected(true);
+          const userDetails = await web3auth?.getUserInfo();
+          setUser(userDetails);
+          await fetchEvents(userDetails?.email!);
         }
       } catch (error) {
         console.error(error);
@@ -76,7 +83,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     init();
-  }, [web3auth?.connected]);
+  }, [connected, web3auth]);
 
   const value = {
     loading,
@@ -85,6 +92,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     setEvents,
     web3auth,
     user,
+    setUser,
+    connected,
+    setConnected,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -14,7 +14,7 @@ export default function AuthMain() {
   const { toast } = useToast();
   const router = useRouter();
 
-  const { web3auth, user } = useApp();
+  const { web3auth, user, setConnected, connected } = useApp();
   const [newUser, setNewUser] = useState(true);
   // const [credentials, setCredentials] = useState(initialState);
   // const [unavailableUsername, setUnavailable] = useState(false);
@@ -36,6 +36,7 @@ export default function AuthMain() {
   const login = async () => {
     await web3auth?.connect();
     if (web3auth?.connected) {
+      setConnected(true);
       router.push("/dashboard");
     }
   };
@@ -51,9 +52,12 @@ export default function AuthMain() {
         <h4 className="font-semibold text-center text-4xl">
           {newUser ? "Hello there👋" : "Welcome back👋"}
         </h4>
+        <p className="text-center mt-5 font-light text-lg">
+          Let's streamline your event management process.
+        </p>
         <button
           onClick={login}
-          className="font-semibold mt-5 py-2.5 w-full rounded-lg grad text-black "
+          className="font-semibold mt-10 py-2.5 w-full rounded-lg grad text-black "
         >
           Log in
         </button>

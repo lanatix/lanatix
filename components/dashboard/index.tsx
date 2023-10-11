@@ -13,10 +13,17 @@ import "swiper/css/navigation";
 import Header from "./header";
 import { fetcher } from "@/utils/fetch";
 import { Event } from "@prisma/client";
+import { useRouter } from "next/navigation";
 
 export default function DashboardMain() {
   const [add, setAdd] = useState(false);
+  const router = useRouter();
   const { web3auth, loading, events } = useApp();
+  useEffect(() => {
+    if (!web3auth?.connected) {
+      router.push("/auth");
+    }
+  }, [web3auth]);
   // const [events, setEvents] = useState<Event[]>();
 
   // useEffect(() => {
@@ -66,7 +73,7 @@ export default function DashboardMain() {
 
         {/* events slider */}
         <div className="w-full">
-          {events ? (
+          {events?.length !== 0 ? (
             <Swiper
               spaceBetween={30}
               navigation
@@ -80,7 +87,7 @@ export default function DashboardMain() {
               ))}
             </Swiper>
           ) : (
-            <div></div>
+            <div>loading</div>
           )}
         </div>
       </div>

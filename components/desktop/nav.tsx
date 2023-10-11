@@ -4,9 +4,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { useApp } from "../context";
+import { useRouter } from "next/navigation";
 
 export default function DeskNav() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { web3auth, setUser, setConnected, setEvents } = useApp();
+  const logout = async () => {
+    await web3auth?.logout();
+    if (!web3auth?.connected) {
+      router.push("/auth");
+      setUser(undefined);
+      setEvents([]);
+      setConnected(false);
+    }
+  };
   const links = [
     {
       title: "Dashboard",
@@ -81,7 +93,10 @@ export default function DeskNav() {
           })}
         </div>
         <div className="w-full p-5 shrink-0">
-          <button className="px-5 font-medium flex items-center gap-2.5 text-sm  text-black rounded p-2.5 w-full grad">
+          <button
+            onClick={logout}
+            className="px-5 font-medium flex items-center gap-2.5 text-sm  text-black rounded p-2.5 w-full grad"
+          >
             <LogOut size={20} />
             Log Out
           </button>
