@@ -65,7 +65,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         setWeb3Auth(web3authInstance);
         if (web3authInstance.connected) {
           const userDetails = await web3authInstance.getUserInfo();
-          setUser(userDetails);
+          if (!userDetails) {
+            setUser(userDetails);
+          }
           await fetchEvents(userDetails.email!);
         }
       } catch (error) {
@@ -74,7 +76,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     init();
-  }, []);
+  }, [web3auth?.connected]);
 
   const value = {
     loading,
