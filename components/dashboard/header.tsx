@@ -4,7 +4,7 @@ import { useApp } from "../context";
 
 export default function Header({ title }: { title: string }) {
   const { user } = useApp();
-  console.log(user);
+  // console.log(user);
   return (
     <div className="p-5 flex items-center w-full">
       <h4 className="font-medium text-2xl">{title}</h4>

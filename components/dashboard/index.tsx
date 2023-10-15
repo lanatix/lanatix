@@ -87,7 +87,7 @@ export default function DashboardMain() {
               ))}
             </Swiper>
           ) : (
-            <div>loading</div>
+            <div>No events yet.</div>
           )}
         </div>
       </div>

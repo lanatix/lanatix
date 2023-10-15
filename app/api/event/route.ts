@@ -25,3 +25,27 @@ export const GET = async (req: NextRequest) => {
     );
   }
 };
+
+export const DELETE = async (req: NextRequest) => {
+  const id = req.nextUrl.searchParams.get("id")!;
+  const owner = req.nextUrl.searchParams.get("owner")!;
+
+  try {
+    await prisma.event.delete({
+      where: {
+        owner,
+        id,
+      },
+    });
+
+    return NextResponse.json(
+      { message: "Event has been deleted successfully", success: true },
+      { status: 200 }
+    );
+  } catch (err) {
+    return NextResponse.json(
+      { message: "A server error has occured", success: false, error: err },
+      { status: 500 }
+    );
+  }
+};

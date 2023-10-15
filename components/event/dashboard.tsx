@@ -107,6 +107,14 @@ export default function EventDashboard({ id }: { id: string }) {
         </div>
       </div>
       <div className="p-5 space-y-5 mt-10">
+        <button
+          className="rounded-lg green-bg p-2.5"
+          onClick={() => {
+            navigator.clipboard.writeText(`http://lanatix.netlify.app/${id}`);
+          }}
+        >
+          Copy Event Link
+        </button>
         <div className="md:flex hidden items-center">
           <h4 className="font-semibold text-2xl">Attendee Data</h4>
           <button
