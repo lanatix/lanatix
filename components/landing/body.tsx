@@ -5,23 +5,23 @@ import Link from "next/link";
 export default function Body() {
   return (
     <div className="flex flex-col mt-10 md:mt-5 items-center justify-center">
-      <div className="text-center z-20 md:text-5xl text-4xl font-bold leading-snug">
+      <div className="text-center z-20 md:text-5xl text-4xl font-bold leading-normal">
         <h4>Welcome to Lanatix</h4>
         <h4>Your Next-Gen Ticket Booking Platform!</h4>
       </div>
-      <h4 className="font-light text-neutral-400">powered by Solana</h4>
+      <h4 className="font-light mt-5 text-neutral-400">powered by Solana</h4>
       <div
         className="flex z-20 mt-16 gap-10
        items-center"
       >
         <Link href="/auth">
-          <button className="btn-gradient2 text-[#1e1e1e] rounded-full py-2.5 px-5 font-semibold ml-auto">
+          <button className="btn-gradient2 text-black text-xl rounded-full py-2.5 px-5 font-medium ml-auto">
             Get Started
           </button>
         </Link>
-        <button className="flex font-medium gap-2.5 items-center">
+        {/* <button className="flex font-medium gap-2.5 items-center">
           <PlaySVG /> How it works
-        </button>
+        </button> */}
       </div>
       <div className="h-[600px]">
         <Image src={tickets} alt="tickets" className="h-full object-cover" />

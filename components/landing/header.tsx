@@ -6,8 +6,8 @@ export default function Header() {
       {/* <h4 className="font-bold text-3xl">lanatix</h4> */}
       <img src="/logo.svg" alt="logo" className="w-10" />
       <nav className="flex items-center gap-5"></nav>
-      <Link className="ml-auto" href="/auth">
-        <button className="btn-gradient rounded-full py-2.5 px-5  font-medium ml-auto">
+      <Link href="/auth" className="ml-auto">
+        <button className="btn-gradient2 text-black text-xl rounded-full py-2.5 px-5 font-medium ml-auto">
           Get Started
         </button>
       </Link>

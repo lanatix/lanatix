@@ -63,10 +63,14 @@ export default function AuthMain() {
         </button>
       </div>
       <div className="md:bg-black md:h-full rounded-[40px] bottom-0 -z-10 md:z-10 absolute md:relative">
+        <div className="p-10 gap-0.5 md:inline-flex items-end hidden">
+          <img src="./logo.svg" className="w-10" alt="" />
+          <h4 className="font-bold text-3xl">anatix</h4>
+        </div>
         <Image
           src={tickets}
           alt="tickets"
-          className="md:absolute md:h-[500px] md:scale-100 scale-[2] md:object-cover bottom-0"
+          className="md:absolute md:h-[600px] md:scale-100 scale-[2] md:object-cover bottom-0"
         />
       </div>
     </div>
